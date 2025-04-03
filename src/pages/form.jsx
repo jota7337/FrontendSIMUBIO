@@ -26,6 +26,7 @@ const Form = () => {
 
   
   return (
+    <DashboardLayout>
     <div className="min-h-screen bg-gray-100 flex flex-col items-center">
       {/* Encabezado */}
       <div className="w-full bg-white shadow-md py-4 flex items-center justify-between px-8">
@@ -97,10 +98,9 @@ const Form = () => {
         Volver
       </button>
 
-     
-        <Outlet />
-
+  
     </div>
+    </DashboardLayout>
   );
 };
 
