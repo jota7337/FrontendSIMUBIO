@@ -1,64 +1,113 @@
-import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
-import Home from './pages/home';
+import React, { useState } from "react";
+import { Outlet, Link } from "react-router-dom";
 
-const DashboardLayout = () => {
+const DashboardLayout = ({ children }) => {
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
   return (
-    <div>
-      <section className="full-box cover dashboard-sideBar">
-        <div className="full-box dashboard-sideBar-bg btn-menu-dashboard"></div>
-        <div className="full-box dashboard-sideBar-ct">
-          <div className="full-box text-uppercase text-center text-titles dashboard-sideBar-title">
-            UNIVERSIDAD EL BOSQUE <i className="zmdi zmdi-close btn-menu-dashboard visible-xs"></i>
-          </div>
-          <div className="full-box dashboard-sideBar-UserInfo">
-            <figure className="full-box">
-              <img src="./assets/img/avatar.jpg" alt="UserIcon" />
-              <figcaption className="text-center text-titles">Victor</figcaption>
-            </figure>
-            <ul className="full-box list-unstyled text-center">
-              <li>
-                <a href="#!">
+    <div className="flex h-screen w-screen"> {/* Ensure full width and height */}
+      {isSidebarVisible && (
+        <aside
+          className="relative w-64 h-full text-white border-r border-white/40 
+          before:absolute before:inset-0 before:bg-[url('../assets/img/sideBar-font.jpg')] 
+          before:bg-cover before:bg-center before:brightness-50 before:content-['']"
+        >
+          <div className="relative h-full flex flex-col p-4 z-10">
+            <button
+              onClick={toggleSidebar}
+              className="mb-4 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 self-end"
+            >
+              ←
+            </button>
+            <div className="text-xl font-bold text-center mb-6">
+              UNIVERSIDAD EL BOSQUE
+            </div>
+            <div className="flex flex-col items-center border-t border-b border-white border-opacity-30 py-4">
+              <img
+                src="./assets/img/avatar.jpg"
+                alt="User Icon"
+                className="w-20 h-20 rounded-full mb-2"
+              />
+              <span className="text-sm">Victor</span>
+              <div className="flex space-x-4 mt-3">
+                <a href="#!" className="text-white text-lg hover:text-orange-500">
                   <i className="zmdi zmdi-settings"></i>
                 </a>
-              </li>
-              <li>
-                <a href="#!" className="btn-exit-system">
+                <a href="#!" className="text-white text-lg hover:text-orange-500">
                   <i className="zmdi zmdi-power"></i>
                 </a>
-              </li>
-            </ul>
+              </div>
+            </div>
+            <nav className="mt-6">
+              <ul className="space-y-2">
+                <li>
+                  <Link
+                    to="/"
+                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                  >
+                    Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/Form"
+                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                  >
+                    Mis especies 
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/Especies"
+                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                  >
+                     Especies 
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/Correciones"
+                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                  >
+                     Correciones  
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/Exportacion"
+                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                  >
+                     Acciones 
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/Nfts"
+                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                  >
+                     Nfts 
+                  </Link>
+                </li>
+              </ul>
+            </nav>
           </div>
-          <ul className="list-unstyled full-box dashboard-sideBar-Menu">
-            <li>
-              <a href="home.html">
-                 Dashboard
-              </a>
-            </li>
-            <li>
-              <Link to="/Form" className="list-unstyled full-box dashboard-sideBar-Menu">
-                 Administrador 
-              </Link> 
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <section className="full-box dashboard-contentPage">
-        <nav className="full-box dashboard-Navbar">
-          <ul className="full-box list-unstyled text-right">
-            <li className="pull-left">
-              <a href="#!" className="btn-menu-dashboard"><i className="zmdi zmdi-more-vert"></i></a>
-            </li>
-            <li>
-              <a href="#!" className="btn-search">
-                <i className="zmdi zmdi-search"></i>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <Outlet />
-      </section>
+        </aside>
+      )}
+      <main className="flex-1 p-6 overflow-y-auto h-full"> {/* Adjust height */}
+        {!isSidebarVisible && (
+          <button
+            onClick={toggleSidebar}
+            className="mb-4 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700"
+          >
+            →
+          </button>
+        )}
+        {children || <Outlet />}
+      </main>
     </div>
   );
 };

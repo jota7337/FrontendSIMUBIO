@@ -2,14 +2,16 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import './index.css';
 import '../public/css/main.css';
 import Form from './pages/form';
-import Inicio from './components/dashboard/inicio';
-import DashboardLayout from './DashboardLayout';
 import { useEffect } from 'react';
 import Login from './pages/login';
 import NotFound from './pages/NotFound';
 import { supabase } from './supabase/client';
 import {TaskContextProvider} from './context/TaskContext';
 import Home from './pages/home';
+import ListEspecies from './components/especies/listaespecies';
+import ObservationsTable from './components/correciones/observationsTable';
+import ExportEspecie from './components/exportacion/exportacion';
+import ContractsList from './components/nfts/listNfts';
 
 
 
@@ -35,6 +37,10 @@ function App() {
 <Route path="/" element={<Home />} />
 <Route path="/Login" element={<Login />} />
 <Route path="/Form" element={<Form />} />
+<Route path="/Especies" element={<ListEspecies />} />
+<Route path="/Correciones" element={<ObservationsTable />} />
+<Route path="/Exportacion" element={<ExportEspecie />} />
+<Route path="/Nfts" element={<ContractsList />} />
 
 
 
