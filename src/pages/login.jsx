@@ -10,7 +10,13 @@ function Login() {
     e.preventDefault();
 
     try {
-      const result = await supabase.auth.signInWithOtp({ email });
+      const result = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: 'https://frontend-simubio.vercel.app', 
+        },
+      });
+      
       console.log(result);
     } catch (error) {
       console.error(error);
