@@ -18,7 +18,7 @@ const Form = () => {
   };
 
   const handleGoToInicio = () => {
-    window.location.href = 'http://frontend-simubio.vercel.app/inicio';
+    window.location.href = 'http://localhost:8080/inicio';
   };
 
   const handleGoToDashboard = () => {
