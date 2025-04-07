@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import Registre from "../components/register";
 import { useNavigate } from 'react-router-dom';
-import Taxon from "../components/taxon";
-import Evento from "../components/evento";
-import Others from "../components/others";
-import Familia from "../components/familia";
-import Datos from "../components/datos";
 import DashboardLayout from '../DashboardLayout';
 import { Outlet } from 'react-router-dom';
+import Taxon from '../components/especies/form/taxon';
+import Evento from '../components/especies/form/evento';
+import Others from '../components/especies/form/others';
+import Familia from '../components/especies/form/familia';
+import Datos from '../components/especies/form/datos';
+import Registre from '../components/especies/form/register';
 
 
 const Form = () => {
