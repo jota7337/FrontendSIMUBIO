@@ -23,12 +23,43 @@ function Datos() {
 
   const campos = [
     { label: "ID del registro biológico", name: "occurrenceID" },
-    { label: "Base del registro", name: "basisOfRecord" },
-    { label: "Tipo", name: "type" },
+    {
+      label: "Base del registro",
+      name: "basisOfRecord",
+      type: "select",
+      options: [
+        "PreservedSpecimen",
+        "LivingSpecimen",
+        "HumanObservation",
+        "MachineObservation",
+        "MaterialSample",
+        "FossilSpecimen",
+      ],
+    },
+    {
+      label: "Tipo",
+      name: "type",
+      type: "select",
+      options: [
+        "PhysicalObject",
+        "Event",
+        "StillImage",
+        "MovingImage",
+        "Sound",
+      ],
+    },
     { label: "Código de la institución", name: "institutionCode" },
     { label: "ID de la institución", name: "institutionID" },
     { label: "Código de la colección", name: "collectionCode" },
-    { label: "ID de la colección", name: "collectionID" },
+    {
+      label: "ID de la colección",
+      name: "collectionID",
+      type: "select",
+      options: [
+        "https://www.gbif.org/grscicoll/collection/0d0e813e-dc60-4357-82b1-810d0af640a5",
+        "RNC:250",
+      ],
+    },
     { label: "Número de catálogo", name: "catalogNumber" },
     { label: "Nombre del conjunto de datos", name: "datasetName" },
     { label: "ID del conjunto de datos", name: "datasetID" },
@@ -42,10 +73,21 @@ function Datos() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {campos.map(({ label, name }) => (
+      {campos.map(({ label, name, type, options }) => (
         <div key={name} className="flex flex-col">
           <label className={labelCon}>{label}</label>
-          <input type="text" className={InputCon} {...register(name)} />
+          {type === "select" ? (
+            <select className={InputCon} {...register(name)}>
+              <option value="">Seleccione una opción</option>
+              {options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input type="text" className={InputCon} {...register(name)} />
+          )}
           {errors[name] && (
             <span className="text-red-500 text-sm mt-1">{errors[name].message}</span>
           )}
