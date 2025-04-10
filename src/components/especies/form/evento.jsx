@@ -1,141 +1,97 @@
-const Evento = () => {
-  const labelCon = "text-gray-600 text-sm mb-1";
-  const InputCon = "border border-gray-300 rounded-md p-2 mt-1 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-600";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { EventoSchema } from "../../../lib/validations";
+
+const labelCon = "text-gray-600 text-sm mb-1";
+const InputCon = "border border-gray-300 rounded-md p-2 mt-1 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-600";
+
+function Evento() {
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(EventoSchema),
+  });
+
+  const onSubmit = (data) => {
+    console.log("Datos válidos:", data);
+  };
+  const campos = [
+    { label: "Número de registro", name: "recordNumber" },
+    { label: "Registrado por", name: "recordedBy" },
+    { label: "Número de individuos", name: "individualCount" },
+    { label: "Cantidad del organismo", name: "organismQuantity" },
+    { label: "Tipo de cantidad del organismo", name: "organismQuantityType" },
+    { label: "Sexo"  , name : "sex"},
+    { label: "Etapa de vida"  , name : "lifeStage"},
+    { label: "Comportamiento"  , name : "behavior"},
+    { 
+      label: "Medios de establecimiento", 
+      name: "establishmentMeans", 
+      type: "select", 
+      options: [
+        { value: "native", label: "Nativo" },
+        { value: "nativeReintroduced", label: "Nativo reintroducido" },
+        { value: "introduced", label: "Introducido" },
+        { value: "introducedAssistedColonisation", label: "Introducido con colonización asistida" },
+        { value: "vagrant", label: "Errante" },
+        { value: "uncertain", label: "Incierto" },
+        { value: "endemic", label: "Éndémica" },
+      ],
+    },
+    { 
+      label: "Estado del registro biológico", 
+      name: "occurrenceStatus", 
+      type: "select", 
+      options: [
+        { value: "present", label: "Present" },
+        { value: "absent", label: "Absent" },
+      ],
+    },
+    { label: "Preparaciones"  , name : "preparations"},
+    { label: "Disposición"  , name : "disposition"},
+    { label: "Derechos"  , name : "license"},
+    { label: "Otros números de catálogo"  , name : "otherCatalogNumbers"},
+    { label: "Comentarios del registro biológico"  , name : "occurrenceRemarks"},
+    { label: "ID del evento"  , name : "eventID"},
+
+  ];
 
     return (
       
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      
-        
-              <div  className="flex flex-col">
-                <label className={labelCon}>Número de registro</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="recordNumber"
-                />
-                </div>
-                 <div  className="flex flex-col">
-                  <label className={labelCon}>Registrado por</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="recordedBy"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Número de individuos</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="individualCount"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Cantidad del organismo</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="organismQuantity"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Tipo de cantidad del organismo</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="organismQuantityType"
-                />
-              </div>  <div  className="flex flex-col">
-                  <label className={labelCon}>Sexo</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="sex"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Etapa de vida</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="lifeStage"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Comportamiento</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="behavior"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Medios de establecimiento</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="establishmentMeans"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Estado del registro biológico</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="occurrenceStatus"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Preparaciones</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="preparations"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Disposición</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="disposition"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Derechos</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="license"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Otros números de catálogo</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="otherCatalogNumbers"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>Comentarios del registro biológico</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="occurrenceRemarks"
-                />
-              </div>
-              <div  className="flex flex-col">
-                  <label className={labelCon}>ID del evento</label>
-                <input
-                  type="text"
-                  className={InputCon}
-                  name="eventID"
-                />
-              </div>
-           
-          </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {campos.map(({ label, name, type, options }) => (
+        <div key={name} className="flex flex-col">
+          <label className={labelCon}>{label}</label>
+          {type === "select" ? (
+            <select className={InputCon} {...register(name)}>
+              <option value="">Seleccione una opción</option>
+              {options.map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input type="text" className={InputCon} {...register(name)} />
+          )}
+          {errors[name] && (
+            <span className="text-red-500 text-sm mt-1">{errors[name].message}</span>
+          )}
+        </div>
+      ))}
+
+      <div className="col-span-2">
+        <button
+          type="submit"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          Enviar
+        </button>
+      </div>
+    </form>
          
           
     );

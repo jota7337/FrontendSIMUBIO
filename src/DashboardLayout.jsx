@@ -3,9 +3,14 @@ import { Outlet, Link } from "react-router-dom";
 
 const DashboardLayout = ({ children }) => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
@@ -47,7 +52,7 @@ const DashboardLayout = ({ children }) => {
                 <li>
                   <Link
                     to="/"
-                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                    className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                   >
                     Dashboard
                   </Link>
@@ -55,7 +60,7 @@ const DashboardLayout = ({ children }) => {
                 <li>
                   <Link
                     to="/Form"
-                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                    className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                   >
                     Mis especies 
                   </Link>
@@ -63,15 +68,51 @@ const DashboardLayout = ({ children }) => {
                 <li>
                   <Link
                     to="/Especies"
-                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                    className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                   >
                      Especies 
                   </Link>
                 </li>
                 <li>
+                  <div
+                    onClick={toggleDropdown}
+                    className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition cursor-pointer"
+                  >
+                    Especies a cargo
+                  </div>
+                  {isDropdownOpen && (
+                    <ul className="ml-4 mt-2 space-y-1">
+                      <li>
+                        <Link
+                          to="/Especie1"
+                          className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
+                        >
+                          Especie 1
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/Especie2"
+                          className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
+                        >
+                          Especie 2
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/Especie3"
+                          className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
+                        >
+                          Especie 3
+                        </Link>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+                <li>
                   <Link
                     to="/Correciones"
-                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                    className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                   >
                      Correciones  
                   </Link>
@@ -79,7 +120,7 @@ const DashboardLayout = ({ children }) => {
                 <li>
                   <Link
                     to="/Exportacion"
-                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                    className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                   >
                      Acciones 
                   </Link>
@@ -87,7 +128,7 @@ const DashboardLayout = ({ children }) => {
                 <li>
                   <Link
                     to="/Nfts"
-                    className="block px-4 py-2 rounded hover:bg-white hover:bg-opacity-20 transition"
+                    className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                   >
                      Nfts 
                   </Link>
