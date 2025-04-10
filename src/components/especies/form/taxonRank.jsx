@@ -1,3 +1,4 @@
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { TaxonRankSchema } from "../../../lib/validations";
@@ -6,7 +7,7 @@ const TaxonRank = () => {
 
     const labelCon = "text-gray-600 text-sm mb-1";
     const InputCon = "border border-gray-300 rounded-md p-2 mt-1 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-600";
-    
+
     const {
         register,
         handleSubmit,
@@ -52,6 +53,7 @@ const TaxonRank = () => {
     </form>
          
           
+
             
       );
   }

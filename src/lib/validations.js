@@ -1,3 +1,4 @@
+
 import { object , number , string, record } from "zod";
 
 export const DatosSchema = object({
@@ -31,6 +32,7 @@ export const DatosSchema = object({
     /^(?:\d{4}(?:-\d{2})?(?:-\d{2})?)(?:\/(?:\d{4}(?:-\d{2})?(?:-\d{2})?|\d{2}))?$/,
     "Debe tener el formato AAAA, AAAA-MM, AAAA-MM-DD o un intervalo válido como AAAA-MM-DD/AAAA-MM-DD"
   ).optional(),  
+
   language: string().min(2, "Debe tener al menos 2 caracteres"),
   license: string().optional(),
   rightsHolder: string().optional(),
@@ -206,3 +208,4 @@ export const EventoSchema = object({
     infraspecificEpithet: string().optional(),
 
   });
+

@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { familySchema } from "../../../lib/validations";
-
 const Familia = () => {
 
   const labelCon = "text-gray-600 text-sm mb-1";
@@ -85,7 +84,6 @@ const Familia = () => {
         </button>
       </div>
     </form>
-         
          
           
     );

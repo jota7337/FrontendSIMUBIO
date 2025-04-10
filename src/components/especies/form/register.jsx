@@ -1,3 +1,4 @@
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { RegistreSchema } from "../../../lib/validations";
@@ -62,6 +63,7 @@ const {
         </button>
       </div>
     </form>
+
          
           
     );
