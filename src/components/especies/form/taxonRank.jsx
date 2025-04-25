@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { TaxonRankSchema } from "../../../lib/validations";
@@ -21,13 +20,16 @@ const TaxonRank = () => {
       };
     
     const campos = [
-      { label: "Categoría del taxón", name: "taxonRank" },
-      { label: "Categoría original del taxón", name: "verbatimTaxonRank" },
-      { label: "Nombre común", name: "vernacularName" },
-      { label: "Estado taxonómico", name: "taxonomicStatus" },
-      { label: "Nombre aceptado usado", name: "acceptedNameUsage" },
-      { label: "Código nomenclatural", name: "nomenclaturalCode" },
-      { label: "Comentarios del taxón", name: "taxonRemarks" },
+      { label: "ID de la identificación", name: "identificationID" },
+      { label: "Identificado por", name: "identifiedBy" },
+      { label: "ID del identificado por", name: "identifiedByID" },
+      { label: "Fecha de identificación", name: "dateIdentified" },
+      { label: "Referencias de la identificación", name: "identificationReferences" },
+      { label: "Estado de verificación de la identificación", name: "identificationVerificationStatus" },
+      { label: "Estado del tipo", name: "typeStatus" },
+      { label: "Identificación original", name: "verbatimIdentification" },
+      { label: "Comentarios de la identificación", name: "identificationRemarks" },
+      { label: "Calificador de la identificación", name: "identificationQualifier" },
     ];
       return (
                   

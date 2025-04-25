@@ -12,6 +12,7 @@ import ListEspecies from './components/especies/listaespecies';
 import ObservationsTable from './components/correciones/observationsTable';
 import ExportEspecie from './components/exportacion/exportacion';
 import ContractsList from './components/nfts/listNfts';
+import SpeciesCatalog from './components/curandores/curandores';
 
 
 
@@ -41,6 +42,7 @@ function App() {
 <Route path="/Correciones" element={<ObservationsTable />} />
 <Route path="/Exportacion" element={<ExportEspecie />} />
 <Route path="/Nfts" element={<ContractsList />} />
+<Route path="/curandores" element={<SpeciesCatalog/>} />
 
 
 
