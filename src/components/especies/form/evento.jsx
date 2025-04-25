@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { EventoSchema } from "../../../lib/validations";
@@ -22,42 +21,34 @@ function Evento() {
   const campos = [
     { label: "Número de registro", name: "recordNumber" },
     { label: "Registrado por", name: "recordedBy" },
+    { label: "ID del registrado por", name: "recordedByID" },
+    { label: "ID del organismo", name: "organismID" },
     { label: "Número de individuos", name: "individualCount" },
     { label: "Cantidad del organismo", name: "organismQuantity" },
     { label: "Tipo de cantidad del organismo", name: "organismQuantityType" },
-    { label: "Sexo"  , name : "sex"},
-    { label: "Etapa de vida"  , name : "lifeStage"},
-    { label: "Comportamiento"  , name : "behavior"},
-    { 
-      label: "Medios de establecimiento", 
-      name: "establishmentMeans", 
-      type: "select", 
-      options: [
-        { value: "native", label: "Nativo" },
-        { value: "nativeReintroduced", label: "Nativo reintroducido" },
-        { value: "introduced", label: "Introducido" },
-        { value: "introducedAssistedColonisation", label: "Introducido con colonización asistida" },
-        { value: "vagrant", label: "Errante" },
-        { value: "uncertain", label: "Incierto" },
-        { value: "endemic", label: "Éndémica" },
-      ],
-    },
-    { 
-      label: "Estado del registro biológico", 
-      name: "occurrenceStatus", 
-      type: "select", 
-      options: [
-        { value: "present", label: "Present" },
-        { value: "absent", label: "Absent" },
-      ],
-    },
-    { label: "Preparaciones"  , name : "preparations"},
-    { label: "Disposición"  , name : "disposition"},
-    { label: "Derechos"  , name : "license"},
-    { label: "Otros números de catálogo"  , name : "otherCatalogNumbers"},
-    { label: "Comentarios del registro biológico"  , name : "occurrenceRemarks"},
-    { label: "ID del evento"  , name : "eventID"},
-
+    { label: "Nombre del organismo", name: "organismName" },
+    { label: "Alcance del organismo", name: "organismScope" },
+    { label: "Organismos asociados", name: "associatedOrganisms" },
+    { label: "Identificaciones previas", name: "previousIdentifications" },
+    { label: "Comentarios del organismo", name: "organismRemarks" },
+    { label: "Sexo", name: "sex" },
+    { label: "Etapa de vida", name: "lifeStage" },
+    { label: "Condición reproductiva", name: "reproductiveCondition" },
+    { label: "Comportamiento", name: "behavior" },
+    { label: "Medios de establecimiento", name: "establishmentMeans" },
+    { label: "Grado de establecimiento", name: "degreeOfEstablishment" },
+    { label: "Ruta", name: "pathway" },
+    { label: "Estado del registro biológico", name: "occurrenceStatus" },
+    { label: "Preparaciones", name: "preparations" },
+    { label: "Disposición", name: "disposition" },
+    { label: "Otros números de catálogo", name: "otherCatalogNumbers" },
+    { label: "Medios asociados", name: "associatedMedia" },
+    { label: "Registros asociados", name: "associatedOccurrences" },
+    { label: "Referencias asociadas", name: "associatedReferences" },
+    { label: "Secuencias asociadas", name: "associatedSequences" },
+    { label: "Taxones asociados", name: "associatedTaxa" },
+    { label: "Comentarios del registro biológico", name: "occurrenceRemarks" },
+    { label: "ID de la muestra material", name: "materialSampleID" },
   ];
 
     return (

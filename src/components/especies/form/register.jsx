@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { RegistreSchema } from "../../../lib/validations";
@@ -22,24 +21,25 @@ const {
   };
 
   const campos = [
-    {label : "Georreferenciado por", name: "georeferencedBy"},
-    {label : "Fecha de georreferenciación", name: "georeferencedDate"},
-    {label : "Protocolo de georreferenciación", name: "georeferenceProtocol"},
-    {label : "ID de la identificación", name: "identificationID"},
-    {label : "Identificado por", name: "identifiedBy"},
-    {label : "ID de la identificación", name: "identifiedByID"},
-    {label : "Fecha de identificación", name: "dateIdentified"},
-    {label : "Referencias de la identificación", name: "identificationReferences"},
-    {label : "Estado de la verificación de la identificación", name: "identificationVerificationStatus"},
-    {label : "Identificación original", name: "verbatimIdentification"},
-    {label : "Comentarios de la Identificación", name: "identificationRemarks"},
-    {label : "Calificador de la identificación", name: "identificationQualifier"},
-    {label : "Código del país", name: "countryCode"},
-    {label : "Nombre científico", name: "scientificName"},
-    {label : "Autoría del nombre científico", name: "scientificNameAuthorship"},
-
-
-  ]; 
+  { label: "ID del contexto geológico", name: "geologicalContextID" },
+  { label: "Eón más antiguo o eonotema más bajo", name: "earliestEonOrLowestEonothem" },
+  { label: "Eón más reciente o eonotema más alto", name: "latestEonOrHighestEonothem" },
+  { label: "Era más antigua o eratema más bajo", name: "earliestEraOrLowestErathem" },
+  { label: "Era más reciente o eratema más alto", name: "latestEraOrHighestErathem" },
+  { label: "Período más antiguo o sistema más bajo", name: "earliestPeriodOrLowestSystem" },
+  { label: "Período más reciente o sistema más alto", name: "latestPeriodOrHighestSystem" },
+  { label: "Época más antigua o serie más baja", name: "earliestEpochOrLowestSeries" },
+  { label: "Época más reciente o serie más alta", name: "latestEpochOrHighestSeries" },
+  { label: "Edad más antigua o etapa más baja", name: "earliestAgeOrLowestStage" },
+  { label: "Edad más reciente o etapa más alta", name: "latestAgeOrHighestStage" },
+  { label: "Zona bioestratigráfica más baja", name: "lowestBiostratigraphicZone" },
+  { label: "Zona bioestratigráfica más alta", name: "highestBiostratigraphicZone" },
+  { label: "Términos litoestratigráficos", name: "lithostratigraphicTerms" },
+  { label: "Grupo", name: "group" },
+  { label: "Formación", name: "formation" },
+  { label: "Miembro", name: "member" },
+  { label: "Capa", name: "bed" },
+]; 
     return (
       
          

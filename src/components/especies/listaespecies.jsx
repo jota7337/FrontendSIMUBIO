@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import DashboardLayout from "../../DashboardLayout";
 import SpeciesDetailsDialog from "./especiedialog";
 
@@ -28,19 +29,28 @@ const ListEspecies = () => {
   const [search, setSearch] = useState("");
   const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const navigate = useNavigate(); // Initialize navigate
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
   };
 
   const handleRowClick = (species) => {
-    setSelectedSpecies(species);
-    setIsDialogOpen(true);
+    navigate("/form", { state: { species, mode: "view" } }); // Navigate to form with species data
   };
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
     setSelectedSpecies(null);
+  };
+
+  const handleAddClick = () => {
+    navigate("/form", { state: { species: null, mode: "add" } }); 
+  };
+
+  const handleEditClick = (e, species) => {
+    e.stopPropagation(); 
+    navigate("/form", { state: { species, mode: "edit" } }); 
   };
 
   const filteredData = data.filter((item) =>
@@ -61,7 +71,7 @@ const ListEspecies = () => {
           />
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            onClick={() => alert("Agregar nuevo registro")}
+            onClick={handleAddClick} // Use handleAddClick
           >
             Agregar Registro
           </button>
@@ -97,10 +107,7 @@ const ListEspecies = () => {
                   <td className="p-3">
                     <button
                       className="bg-green-500 text-white px-3 py-1 rounded mr-2 hover:bg-green-600"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        alert("Editar " + item.nombre);
-                      }}
+                      onClick={(e) => handleEditClick(e, item)} // Use handleEditClick
                     >
                       Editar
                     </button>

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Outlet, Link } from "react-router-dom";
+import { supabase } from "./supabase/client";
+
 
 const DashboardLayout = ({ children }) => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -13,8 +15,18 @@ const DashboardLayout = ({ children }) => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const handleLogout = async () => {
+    console.log("Logging out...");
+    const { error } = await supabase.auth.signOut(); 
+    if (error) {
+      console.error("Error logging out:", error.message);
+    } else {
+      window.location.href = "/login"; 
+    }
+  };
+
   return (
-    <div className="flex h-screen w-screen"> {/* Ensure full width and height */}
+    <div className="flex h-screen w-screen">
       {isSidebarVisible && (
         <aside
           className="relative w-64 h-full text-white border-r border-white/40 
@@ -42,7 +54,11 @@ const DashboardLayout = ({ children }) => {
                 <a href="#!" className="text-white text-lg hover:text-orange-500">
                   <i className="zmdi zmdi-settings"></i>
                 </a>
-                <a href="#!" className="text-white text-lg hover:text-orange-500">
+                <a
+                  href="#!"
+                  className="text-white text-lg hover:text-orange-500"
+                  onClick={handleLogout} // Link the logout function
+                >
                   <i className="zmdi zmdi-power"></i>
                 </a>
               </div>
@@ -73,42 +89,19 @@ const DashboardLayout = ({ children }) => {
                      Especies 
                   </Link>
                 </li>
-                <li>
-                  <div
-                    onClick={toggleDropdown}
-                    className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition cursor-pointer"
-                  >
-                    Especies a cargo
-                  </div>
-                  {isDropdownOpen && (
-                    <ul className="ml-4 mt-2 space-y-1">
+              
+               
                       <li>
                         <Link
-                          to="/Especie1"
+                          to="/curandores"
                           className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                         >
-                          Especie 1
+                          Especies a cargo 
                         </Link>
                       </li>
-                      <li>
-                        <Link
-                          to="/Especie2"
-                          className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
-                        >
-                          Especie 2
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/Especie3"
-                          className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
-                        >
-                          Especie 3
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
-                </li>
+                     
+                
+              
                 <li>
                   <Link
                     to="/Correciones"
