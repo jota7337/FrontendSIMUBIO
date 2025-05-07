@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import './index.css';
-import '../public/css/main.css';
 import Form from './pages/form';
 import { useEffect } from 'react';
 import Login from './pages/login';
