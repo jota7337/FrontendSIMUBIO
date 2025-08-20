@@ -1,130 +1,108 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import DashboardLayout from '../DashboardLayout';
-import { Outlet } from 'react-router-dom';
-import Taxon from '../components/especies/form/taxon';
-import Evento from '../components/especies/form/evento';
-import Others from '../components/especies/form/others';
-import Familia from '../components/especies/form/familia';
-import Datos from '../components/especies/form/datos';
-import Registre from '../components/especies/form/register';
-
+import { useState, useEffect } from 'react';
+import {  useLocation } from 'react-router-dom';
+import { createEspecie, updateEspecie, deleteEspecie } from '../apis/Especie'; 
+import EspeciesForm from '../components/especies/form/especiesForm';
+import { DatosSchema, EventoSchema,  FamilySchema,  OtherSchema, RegistreSchema, TaxonRankSchema, TaxonSchema } from '../lib/validations';
+import { camposDatos, camposEvento, camposFamilia, camposOtros, camposRegsitre, camposTaxon, camposTaxonRank } from '../lib/fields';
 
 const Form = () => {
   const [activeForm, setActiveForm] = useState(null);
-  const location = useLocation(); // Access location state
-  const [receivedData, setReceivedData] = useState(null);
+  const location = useLocation();
+  const [formData, setFormData] = useState({}); 
+  const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
     if (location.state && location.state.species) {
-      console.log("Received data from listaespecies:", location.state.species); // Log received data
-      setReceivedData(location.state.species); // Store received data
-    } else {
-      console.log("No data received from listaespecies."); // Fallback log
+      setFormData(location.state.species);
+      setEditingId(location.state.species.id || null);
     }
   }, [location.state]);
 
   const handleButtonClick = (formIndex) => {
-    console.log("Selected Form Index:", formIndex); // Debugging line
     setActiveForm(formIndex);
   };
 
-  const handleGoToInicio = () => {
-    window.location.href = 'http://localhost:8080/inicio';
+
+  const handleSectionChange = (sectionData) => {
+    setFormData(prev => ({ ...prev, ...sectionData }));
   };
 
+  
+  const handleCreate = async () => {
+    const { data, error } = await createEspecie(formData);
+    if (error) alert('Error al crear especie');
+    else alert('Especie creada');
+  };
+
+
+  const handleUpdate = async () => {
+    if (!editingId) return alert('No hay especie para actualizar');
+    const { data, error } = await updateEspecie(editingId, formData);
+    if (error) alert('Error al actualizar especie');
+    else alert('Especie actualizada');
+  };
+
+ 
+  const handleDelete = async () => {
+    if (!editingId) return alert('No hay especie para eliminar');
+    const { data, error } = await deleteEspecie(editingId);
+    if (error) alert('Error al eliminar especie');
+    else alert('Especie eliminada');
+  };
+
+
+
   const handleGoToDashboard = () => {
-    window.location.href = '/';  };
+    window.location.href = '/';
+  };
 
-  
   return (
-    <DashboardLayout>
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-      {/* Encabezado */}
-      <div className="w-full bg-white shadow-md py-4 flex items-center justify-between px-8">
-        <div className="flex items-center">
-          <img src="logo.png" alt="Logo Universidad El Bosque" className="w-40 h-20" />
+   
+      <div className="min-h-screen bg-gray-100 flex flex-col items-center">
+        <div className="w-full bg-white shadow-md py-4 flex items-center justify-between px-8">
+          <div className="flex items-center">
+            <img src="logo.png" alt="Logo Universidad El Bosque" className="w-40 h-20" />
+          </div>
+          <div className="text-gray-800 font-medium mr-4">Usuario</div>
         </div>
-        <div className="text-gray-800 font-medium mr-4">Usuario</div>
-      </div>
-      <div className="w-full h-20 bg-teal-900 shadow-md py-4 flex items-center justify-between px-8"></div>
+        <div className="w-full h-20 bg-teal-900 shadow-md py-4 flex items-center justify-between px-8"></div>
 
-      <div className="w-full h-40 bg-cover bg-center my-4 relative" style={{ backgroundImage: `url(${"fondo.png"})` }}>
-        <div className="bg-black bg-opacity-50 h-full flex justify-center items-center">
-          <h2 className="text-white text-2xl font-mono text-left shadow-lg">Ciencias Universidad El Bosque</h2>
+        <div className="w-full h-40 bg-cover bg-center my-4 relative" style={{ backgroundImage: `url(${"fondo.png"})` }}>
+          <div className="bg-black bg-opacity-50 h-full flex justify-center items-center">
+            <h2 className="text-white text-2xl font-mono text-left shadow-lg">Ciencias Universidad El Bosque</h2>
+          </div>
         </div>
+
+        <div className="flex space-x-4 mb-6">
+          <button onClick={() => handleButtonClick(1)} className={`px-4 py-2 rounded ${activeForm === 1 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'}`}>Informacion del evento</button>
+          <button onClick={() => handleButtonClick(2)} className={`px-4 py-2 rounded ${activeForm === 2 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'}`}>Taxonomia</button>
+          <button onClick={() => handleButtonClick(3)} className={`px-4 py-2 rounded ${activeForm === 3 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'}`}>Informacion de la especie</button>
+          <button onClick={() => handleButtonClick(4)} className={`px-4 py-2 rounded ${activeForm === 4 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'}`}>Ubicacion coordenadas</button>
+          <button onClick={() => handleButtonClick(5)} className={`px-4 py-2 rounded ${activeForm === 5 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'}`}>Lugar del evento</button>
+          <button onClick={() => handleButtonClick(6)} className={`px-4 py-2 rounded ${activeForm === 6 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'}`}>Informacion institucion</button>
+          <button onClick={() => handleButtonClick(7)} className={`px-4 py-2 rounded ${activeForm === 7 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'}`}>Taxon Rank</button>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-8 w-11/12 md:w-8/12 lg:w-6/12">
+          <h3 className="text-2xl font-semibold text-center mb-6 text-gray-800">Formulario SIB</h3>
+          {activeForm === 1 && <EspeciesForm initialData={formData} onChange={handleSectionChange} zodSchema={RegistreSchema} fields={camposRegsitre}/>}
+          {activeForm === 2 && <EspeciesForm initialData={formData} onChange={handleSectionChange}  zodSchema={TaxonSchema} fields={camposTaxon} />}
+          {activeForm === 3 && <EspeciesForm initialData={formData} onChange={handleSectionChange} zodSchema={EventoSchema} fields={camposEvento} />}
+          {activeForm === 4 && <EspeciesForm initialData={formData} onChange={handleSectionChange} zodSchema={OtherSchema} fields={camposOtros}/>}
+          {activeForm === 5 && <EspeciesForm initialData={formData} onChange={handleSectionChange} zodSchema={FamilySchema} fields={camposFamilia}/>}
+          {activeForm === 6 && <EspeciesForm initialData={formData} onChange={handleSectionChange} zodSchema={DatosSchema} fields={camposDatos} />}
+                {activeForm === 7 && <EspeciesForm initialData={formData} onChange={handleSectionChange} zodSchema={TaxonRankSchema} fields={camposTaxonRank} />}
+        </div>
+
+        <div className="flex space-x-2 mt-4">
+          <button onClick={handleCreate} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Crear</button>
+          <button onClick={handleUpdate} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Actualizar</button>
+          <button onClick={handleDelete} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Eliminar</button>
+        </div>
+
+        <button onClick={handleGoToDashboard} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-4">Volver</button>
       </div>
-
-      <div className="flex space-x-4 mb-6">
-        <button
-          onClick={() => handleButtonClick(1)}
-          className={`px-4 py-2 rounded ${
-            activeForm === 1 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'
-          }`}
-        >
-          Informacion del evento
-        </button>
-        <button
-          onClick={() => handleButtonClick(2)}
-          className={`px-4 py-2 rounded ${
-            activeForm === 2 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'
-          }`}
-        >
-          Taxonomia
-        </button>
-        <button
-          onClick={() => handleButtonClick(3)}
-          className={`px-4 py-2 rounded ${
-            activeForm === 3 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'
-          }`}
-        >
-          Informacion de la especie
-        </button>
-        <button
-          onClick={() => handleButtonClick(4)}
-          className={`px-4 py-2 rounded ${
-            activeForm === 4 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'
-          }`}
-        >
-          Ubicacion coordenadas
-        </button>
-        <button
-          onClick={() => handleButtonClick(5)}
-          className={`px-4 py-2 rounded ${
-            activeForm === 5 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'
-          }`}
-        >
-          Lugar del evento
-        </button>
-        <button
-          onClick={() => handleButtonClick(6)}
-          className={`px-4 py-2 rounded ${
-            activeForm === 6 ? 'bg-green-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'
-          }`}
-        >
-          Informacion institucion
-        </button>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-md p-8 w-11/12 md:w-8/12 lg:w-6/12">
-        <h3 className="text-2xl font-semibold text-center mb-6 text-gray-800">Formulario SIB</h3>
-        {activeForm === 1 && <Registre initialData={receivedData} />}
-        {activeForm === 2 && <Taxon initialData={receivedData} />}
-        {activeForm === 3 && <Evento initialData={receivedData} />}
-        {activeForm === 4 && <Others initialData={receivedData} />}
-        {activeForm === 5 && <Familia initialData={receivedData} />}
-        {activeForm === 6 && <Datos initialData={receivedData} />}
-      </div>
-
-      <button
-         onClick={handleGoToDashboard} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Volver
-      </button>
-
   
-    </div>
-    </DashboardLayout>
   );
 };
 

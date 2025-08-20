@@ -1,5 +1,5 @@
 
-import { object , number , string, record } from "zod";
+import { object , number , string } from "zod";
 
 export const DatosSchema = object({
   occurrenceID: string()
@@ -136,7 +136,7 @@ export const EventoSchema = object({
     countryCode: string().min(1, "Este campo es obligatorio"),
   });
 
-  export const familySchema = object({
+  export const FamilySchema = object({
     year: string().optional(),
     mes : string().optional(),
     dia : string().optional(),

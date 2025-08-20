@@ -1,5 +1,5 @@
 import { BarChart, Bar, PieChart, Pie, Tooltip, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
-import DashboardLayout from "../DashboardLayout";
+
 
 const dataBar = [
   { name: "Certified Road Project", value: 2197 },
@@ -17,7 +17,7 @@ const dataPie = [
 
 export default function Dashboard() {
   return (
-    <DashboardLayout>
+    
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-6 text-center">Dashboard de Especies</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -57,6 +57,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+  
   );
 }

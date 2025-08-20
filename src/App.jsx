@@ -12,6 +12,8 @@ import ObservationsTable from './components/correciones/observationsTable';
 import ExportEspecie from './components/exportacion/exportacion';
 import ContractsList from './components/nfts/listNfts';
 import SpeciesCatalog from './components/curandores/curandores';
+import UsuariosAdmin from './components/usuarios/UsuariosAdmin';
+import DashboardLayout from './DashboardLayout';
 
 
 
@@ -21,9 +23,9 @@ function App() {
   useEffect(() => {
     supabase.auth.onAuthStateChange((event, session) => {
       if (!session) {
-        navigate('/Login'); // Redirigir a la página de inicio si se inicia sesión
+        navigate('/Login'); 
       } else{
-        navigate('/'); // Redirigir a la página de inicio de sesión si se cierra sesión
+        navigate('/'); 
       }
     });
     
@@ -31,9 +33,12 @@ function App() {
 
 
   return (
+
+    <DashboardLayout>
     <div className="App">
     <TaskContextProvider>
     <Routes>
+
 <Route path="/" element={<Home />} />
 <Route path="/Login" element={<Login />} />
 <Route path="/Form" element={<Form />} />
@@ -42,7 +47,7 @@ function App() {
 <Route path="/Exportacion" element={<ExportEspecie />} />
 <Route path="/Nfts" element={<ContractsList />} />
 <Route path="/curandores" element={<SpeciesCatalog/>} />
-
+<Route path="/usuarios" element={<UsuariosAdmin />} />
 
 
 <Route path="*" element={<NotFound />} />
@@ -50,6 +55,7 @@ function App() {
     </Routes>
     </TaskContextProvider>
   </div>
+  </DashboardLayout>
   );
 }
 

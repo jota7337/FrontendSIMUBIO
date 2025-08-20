@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Pencil, Trash } from "lucide-react";
-import DashboardLayout from "../../DashboardLayout";
+
 
 const initialObservations = [
   { id: 1, alias: "Especie1", department: "Mamíferos", observation: "El jaguar es un felino de gran tamaño que habita en..." },
@@ -20,7 +20,7 @@ export default function ObservationsTable() {
   };
 
   return (
-    <DashboardLayout>
+  
       <div className=" w-full  p-6 bg-gray-100 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Correcciones de Observaciones</h2>
         <div className="overflow-x-auto">
@@ -66,6 +66,6 @@ export default function ObservationsTable() {
           </table>
         </div>
       </div>
-    </DashboardLayout>
+
   );
 }

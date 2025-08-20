@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import DashboardLayout from "../../DashboardLayout";
+import { useState } from "react";
+
 
 const catalogs = [
   { id: "0001", owner: "Carlos" },
@@ -52,7 +52,7 @@ const SpeciesCatalog = () => {
     : [];
 
   return (
-    <DashboardLayout>
+    
     <div className="p-4">
       {/* Botones de catálogo */}
       <div className="flex gap-2 mb-4 flex-wrap">
@@ -110,7 +110,7 @@ const SpeciesCatalog = () => {
         <p className="text-gray-500">Selecciona un catálogo para ver los datos.</p>
       )}
     </div>
-    </DashboardLayout>
+
   );
 };
 

@@ -1,42 +1,42 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import DashboardLayout from "../../DashboardLayout";
-import SpeciesDetailsDialog from "./especiedialog";
+import { useNavigate } from "react-router-dom"; 
 
-const initialData = [
-  {
-    nombre: "Cathorops mapale Betancur-R. & Acero P., 2005",
-    pais: "Colombia",
-    coordenadas: "10.97N, 74.39W",
-    anio: 2007,
-    base: "Observación humana",
-    conjunto: "Pesquería Artesanal de la Ciénaga Grande de Santa Marta - SIPEIN",
-    publicador: "Instituto de Investigaciones Marinas y Costeras - Invemar",
-  },
-  {
-    nombre: "Triticum aestivum subsp. aestivum",
-    pais: "Alemania",
-    coordenadas: "-",
-    anio: "-",
-    base: "Registro biológico",
-    conjunto: "A global database for the distributions of crop wild relatives",
-    publicador: "Centro Internacional de Agricultura Tropical - CIAT",
-  },
-];
+
+import SpeciesDetailsDialog from "./especiedialog";
+import { getEspecies, deleteEspecie } from '../../apis/Especie';
+import { useEffect, useState } from "react";
+
+
+
 
 const ListEspecies = () => {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const { data: especies, error } = await getEspecies();
+      if (!error && Array.isArray(especies)) {
+        setData(especies);
+      } else {
+        setData([]);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
   };
 
   const handleRowClick = (species) => {
-    navigate("/form", { state: { species, mode: "view" } }); // Navigate to form with species data
+    console.log("Datos enviados al formulario (view):", { species, mode: "view" });
+    navigate("/form", { state: { species, mode: "view" } });
   };
 
   const handleCloseDialog = () => {
@@ -45,20 +45,37 @@ const ListEspecies = () => {
   };
 
   const handleAddClick = () => {
-    navigate("/form", { state: { species: null, mode: "add" } }); 
+    console.log("Datos enviados al formulario (add):", { species: null, mode: "add" });
+    navigate("/form", { state: { species: null, mode: "add" } });
   };
 
   const handleEditClick = (e, species) => {
-    e.stopPropagation(); 
-    navigate("/form", { state: { species, mode: "edit" } }); 
+    e.stopPropagation();
+    console.log("Datos enviados al formulario (edit):", { species: { ...species }, mode: "edit" });
+    navigate("/form", { state: { species: { ...species }, mode: "edit" } });
+  };
+
+  const handleDeleteClick = async (e, species) => {
+    e.stopPropagation();
+    if (window.confirm(`¿Seguro que deseas eliminar ${species.scientificName || species.nombre}?`)) {
+      console.log("Eliminando especie con ID:", species.id);
+      await deleteEspecie(species.id);
+      setData((prev) => prev.filter((item) => item.id !== species.id));
+    }
+  };
+
+  const handleViewDetailsClick = (e, species) => {
+    e.stopPropagation();
+    setSelectedSpecies(species);
+    setIsDialogOpen(true);
   };
 
   const filteredData = data.filter((item) =>
-    item.nombre.toLowerCase().includes(search.toLowerCase())
+    (item.scientificName || item.nombre || "").toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <DashboardLayout>
+     <div>
       <div className="w-full p-4"> 
         <h2 className="text-2xl font-bold mb-4">Registros de Especies</h2>
         <div className="mb-4 flex justify-between">
@@ -90,36 +107,49 @@ const ListEspecies = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.length > 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan="8" className="text-center p-4 text-gray-500">Cargando...</td>
+              </tr>
+            ) : filteredData.length > 0 ? (
               filteredData.map((item, index) => (
                 <tr
-                  key={index}
+                  key={item.id || index}
                   className="border-b hover:bg-gray-50 cursor-pointer"
                   onClick={() => handleRowClick(item)}
                 >
-                  <td className="p-3">{item.nombre}</td>
-                  <td className="p-3">{item.pais}</td>
-                  <td className="p-3">{item.coordenadas}</td>
-                  <td className="p-3">{item.anio}</td>
-                  <td className="p-3">{item.base}</td>
-                  <td className="p-3">{item.conjunto}</td>
-                  <td className="p-3">{item.publicador}</td>
-                  <td className="p-3">
-                    <button
-                      className="bg-green-500 text-white px-3 py-1 rounded mr-2 hover:bg-green-600"
-                      onClick={(e) => handleEditClick(e, item)} // Use handleEditClick
+                  <td className="p-3">{item.scientificName || item.nombre}</td>
+                  <td className="p-3">{item.country || item.pais}</td>
+                  <td className="p-3">{item.coordenadas || item.decimalLatitude + ', ' + item.decimalLongitude || '-'}</td>
+                  <td className="p-3">{item.year || item.anio || '-'}</td>
+                  <td className="p-3">{item.basisOfRecord || item.base}</td>
+                  <td className="p-3">{item.datasetName || item.conjunto}</td>
+                  <td className="p-3">{item.rightsHolder || item.publicador}</td>
+                  <td className="p-3 flex gap-2">
+                
+                    <span
+                      title="Ver Detalles"
+                      className="cursor-pointer text-blue-500 text-xl hover:text-blue-700"
+                      onClick={(e) => handleViewDetailsClick(e, item)}
                     >
-                      Editar
-                    </button>
-                    <button
-                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        alert("Eliminar " + item.nombre);
-                      }}
+                      🛈
+                    </span>
+                
+                    <span
+                      title="Editar"
+                      className="cursor-pointer text-green-500 text-xl hover:text-green-700"
+                      onClick={(e) => handleEditClick(e, item)}
                     >
-                      Eliminar
-                    </button>
+                      ✏️
+                    </span>
+                 
+                    <span
+                      title="Eliminar"
+                      className="cursor-pointer text-red-500 text-xl hover:text-red-700"
+                      onClick={(e) => handleDeleteClick(e, item)}
+                    >
+                      🗑️
+                    </span>
                   </td>
                 </tr>
               ))
@@ -136,9 +166,9 @@ const ListEspecies = () => {
       <SpeciesDetailsDialog
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}
-        species={selectedSpecies}
+        species={selectedSpecies} 
       />
-    </DashboardLayout>
+</div>
   );
 };
 
