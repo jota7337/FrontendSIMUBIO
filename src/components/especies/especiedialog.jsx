@@ -25,7 +25,7 @@ const SpeciesDetailsDialog = ({ isOpen, onClose, species }) => {
         </div>
         <div className="mt-4">
           <h3 className="text-lg font-semibold">Taxón</h3>
-          <p><span className="font-semibold">Reino: </span>{species.reino}</p>
+          <p><span className="font-semibold">Reino: </span>{species.scientificName}</p>
           <p><span className="font-semibold">Orden: </span>{species.orden}</p>
           <p><span className="font-semibold">Familia: </span>{species.familia}</p>
           <p><span className="font-semibold">Género: </span>{species.genero}</p>

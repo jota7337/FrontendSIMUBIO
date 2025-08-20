@@ -1,62 +1,37 @@
-// Call the dataTables jQuery plugin
-$(document).ready(function() {
-  cargarUsuarios();
-  $('#usuarios').DataTable();
-});
+import { supabase } from '../supabase/client';
 
- async function cargarUsuarios() {
-     let email = localStorage.email;
-     if (email) {
-
-    const request = await fetch('api/usuarios', {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-    });
-    const usuarios = await request.json();
-    let lista= "";
-
-    for(let usuario of usuarios){
-
-        let btelminar = "<a href=\"#\" onclick='eliminarUsuario("+usuario.id+")' class=\"btn btn-danger btn-circle\">\n" +
-            "                                        <i class=\"fas fa-trash\"></i>\n" +
-            "                                    </a>";
-
-        let telefonoP= usuario.telefono == null ? "--" : usuario.telefono;
-
-        let usuariohtml = "<tr><td>"+usuario.id+"</td><td>"+usuario.nombre+" "+usuario.apellido+"</td>" +
-            " <td>"+usuario.email+"</td> <td>"+telefonoP+"</td>" +
-            " <td>"+btelminar+"</td> </tr>";
-           lista+= usuariohtml;
-    }
-
-    console.log(usuarios);
-
-document.querySelector('#usuarios tbody').outerHTML =lista;
-
-     } else {
-         alert("El usuario no está registrado");
-         window.location.href = "/login";
-     }
+// Consultar usuarios desde auth.users
+export async function getUsuarios() {
+    // Solo consulta básica, puedes ajustar los campos
+    const { data, error } = await supabase
+        .from('users')
+        .select('id, email, created_at, role');
+    return { data, error };
 }
 
+// Consultar roles desde la vista v_mis_roles
+export async function getRoles() {
+    const { data, error } = await supabase
+        .from('v_mis_roles')
+        .select('*');
+    return { data, error };
+}
 
-async function eliminarUsuario(id){
+// Actualizar datos del usuario (solo campos custom, no email/password)
+export async function updateUsuario(id, usuario) {
+    // Solo puedes actualizar campos custom si tienes permisos
+    const { data, error } = await supabase
+        .from('auth.users')
+        .update(usuario)
+        .eq('id', id);
+    return { data, error };
+}
 
-
-     if (!confirm ("quiere eliminar el usuario")){
-         return;
-     }
-
-         const request = await fetch('api/usuarios/' + id, {
-             method: 'DELETE',
-             headers: {
-                 'Accept': 'application/json',
-                 'Content-Type': 'application/json'
-             },
-         });
-         location.reload()
-
+// Eliminar usuario (solo si tienes permisos)
+export async function deleteUsuario(id) {
+    const { data, error } = await supabase
+        .from('auth.users')
+        .delete()
+        .eq('id', id);
+    return { data, error };
 }

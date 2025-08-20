@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { Outlet, Link } from "react-router-dom";
 import { supabase } from "./supabase/client";
 
@@ -73,14 +73,7 @@ const DashboardLayout = ({ children }) => {
                     Dashboard
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    to="/Form"
-                    className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
-                  >
-                    Mis especies 
-                  </Link>
-                </li>
+                
                 <li>
                   <Link
                     to="/Especies"
@@ -124,6 +117,14 @@ const DashboardLayout = ({ children }) => {
                     className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                   >
                      Nfts 
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/usuarios"
+                    className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
+                  >
+                    Usuarios
                   </Link>
                 </li>
               </ul>

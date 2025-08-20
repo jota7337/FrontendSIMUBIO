@@ -1,16 +1,30 @@
-import { useState } from "react";
-import { Trash, Info, FileText, FileSpreadsheet } from "lucide-react";
-import DashboardLayout from "../../DashboardLayout";
 
-const initialObservations = [
-  { id: 1, category: "Mammalia", name: "Jaguar", observation: "El jaguar es un felino grande de América." },
-  { id: 2, category: "Reptilia", name: "Iguana", observation: "La iguana verde es común en zonas tropicales." },
-  { id: 3, category: "Mammalia", name: "Oso Andino", observation: "Único oso nativo de Sudamérica." },
-  { id: 4, category: "Reptilia", name: "Caimán", observation: "Habita en ríos y lagunas de climas cálidos." }
-];
+import { useState, useEffect } from "react";
+import { Trash, Info, FileText, FileSpreadsheet } from "lucide-react";
+import { getEspecies } from '../../apis/Especie';
+
 
 const ExportEspecie = () => {
-  const [observations, setObservations] = useState(initialObservations);
+  const [observations, setObservations] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data, error } = await getEspecies();
+      if (!error && Array.isArray(data)) {
+  
+        const obs = data.map((item, idx) => ({
+          id: item.id || idx,
+          category: item.family || item.class || 'Sin categoría',
+          name: item.scientificName || item.nombre || '-',
+          observation: item.observation || item.occurrenceRemarks || '-',
+        }));
+        setObservations(obs);
+      } else {
+        setObservations([]);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleDelete = (id) => {
     setObservations(observations.filter(obs => obs.id !== id));
@@ -22,8 +36,27 @@ const ExportEspecie = () => {
     return acc;
   }, {});
 
+  // Exportar por tabulaciones
+  const handleExportTab = (category) => {
+    const rows = groupedObservations[category];
+    if (!rows || rows.length === 0) return;
+    // Encabezado
+    let content = 'Nombre\tObservación\n';
+    content += rows.map(r => `${r.name}\t${r.observation}`).join('\n');
+    // Descargar archivo
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `observaciones_${category}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <DashboardLayout>
+  
     <div className="p-6 bg-gray-100 min-h-screen">
     <h2 className="text-xl font-semibold mb-4">Observaciones por Categoría</h2>
 
@@ -35,7 +68,7 @@ const ExportEspecie = () => {
             <button className="flex items-center bg-green-500 text-white px-3 py-1 rounded-lg">
               <FileSpreadsheet className="w-4 h-4 mr-1" /> Exportar Excel
             </button>
-            <button className="flex items-center bg-blue-500 text-white px-3 py-1 rounded-lg">
+            <button className="flex items-center bg-blue-500 text-white px-3 py-1 rounded-lg" onClick={() => handleExportTab(category)}>
               <FileText className="w-4 h-4 mr-1" /> Exportar Tabulaciones
             </button>
           </div>
@@ -70,7 +103,7 @@ const ExportEspecie = () => {
     ))}
   </div>
   
-</DashboardLayout>
+
 );
 };
 export default ExportEspecie;
