@@ -23,9 +23,10 @@ export async function deleteComentario(id) {
 }
 
 
-const { data: userData } = await supabase.auth.getUser();
-const authorId = userData?.user?.id;
+
 export async function getComentariosByAuthor() {
+  const { data: userData } = await supabase.auth.getUser();
+const authorId = userData?.user?.id;
   const { data, error } = await supabase
     .from('comentarios')
     .select(`

@@ -1,8 +1,9 @@
 import { supabase } from '../supabase/client';
 
+export async function getReferencesByUser() {
+    
 const { data: userData} = await supabase.auth.getUser();
 const userId = userData.user.id;
-export async function getReferencesByUser() {
   const { data, error } = await supabase
     .from('reference')
     .select('id,  referencia')
