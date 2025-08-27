@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 
 function EspeciesForm({initialData = {} , onChange  , fields = [] ,zodSchema}) {
+  console.log('Información recibida en EspeciesForm (initialData):', initialData);
 
       const labelCon = "text-gray-600 text-sm mb-1";
       const InputCon = "border border-gray-300 rounded-md p-2 mt-1 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-600";
@@ -68,7 +69,7 @@ function EspeciesForm({initialData = {} , onChange  , fields = [] ,zodSchema}) {
           type="submit"
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >
-          Enviar
+          Validar
         </button>
       </div>
     </form>

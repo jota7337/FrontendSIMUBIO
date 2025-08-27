@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import Login from './pages/login';
 import NotFound from './pages/NotFound';
 import { supabase } from './supabase/client';
-import {TaskContextProvider} from './context/TaskContext';
+import { TaskContextProvider } from './context/TaskContext';
 import Home from './pages/home';
 import ListEspecies from './components/especies/listaespecies';
 import ObservationsTable from './components/correciones/observationsTable';
@@ -15,47 +15,49 @@ import SpeciesCatalog from './components/curandores/curandores';
 import UsuariosAdmin from './components/usuarios/UsuariosAdmin';
 import DashboardLayout from './DashboardLayout';
 
-
-
 function App() {
-
   const navigate = useNavigate();
-  useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
-        navigate('/Login'); 
-      } else{
-        navigate('/'); 
-      }
-    });
+
+useEffect(() => {
+  const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    if (!session) {
+      navigate('/Login');
+    }
     
-  }, []);
+  });
+
+  return () => {
+    authListener.subscription.unsubscribe();
+  };
+}, [navigate]);
 
 
   return (
-
-    <DashboardLayout>
     <div className="App">
-    <TaskContextProvider>
-    <Routes>
+      <TaskContextProvider>
+        <Routes>
 
-<Route path="/" element={<Home />} />
-<Route path="/Login" element={<Login />} />
-<Route path="/Form" element={<Form />} />
-<Route path="/Especies" element={<ListEspecies />} />
-<Route path="/Correciones" element={<ObservationsTable />} />
-<Route path="/Exportacion" element={<ExportEspecie />} />
-<Route path="/Nfts" element={<ContractsList />} />
-<Route path="/curandores" element={<SpeciesCatalog/>} />
-<Route path="/usuarios" element={<UsuariosAdmin />} />
+          {/* Login sin DashboardLayout */}
+          <Route path="/Login" element={<Login />} />
 
+          {/* Rutas con DashboardLayout */}
+          <Route element={<DashboardLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/Form" element={<Form />} />
+            <Route path="/Especies" element={<ListEspecies />} />
+            <Route path="/Correciones" element={<ObservationsTable />} />
+            <Route path="/Exportacion" element={<ExportEspecie />} />
+            <Route path="/Nfts" element={<ContractsList />} />
+            <Route path="/curandores" element={<SpeciesCatalog />} />
+            <Route path="/usuarios" element={<UsuariosAdmin />} />
+          </Route>
 
-<Route path="*" element={<NotFound />} />
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
 
-    </Routes>
-    </TaskContextProvider>
-  </div>
-  </DashboardLayout>
+        </Routes>
+      </TaskContextProvider>
+    </div>
   );
 }
 

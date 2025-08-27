@@ -4,16 +4,32 @@ import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const result = await supabase.auth.signInWithOtp({ email });
-      console.log(result);
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        alert('Credenciales incorrectas');
+        return;
+      }
+      // Obtener el usuario y su rol
+      const { user } = data;
+      console.log('Usuario autenticado:', user);
+      // Suponiendo que el rol está en user.user_metadata.rol
+      const rol = user?.user_metadata?.rol;
+      if (rol === 'admin') {
+        navigate('/admin');
+      } else if (rol === 'curador') {
+        navigate('/curador');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       console.error(error);
+      alert('Error al iniciar sesión');
     }
   };
 
@@ -39,8 +55,18 @@ function Login() {
             placeholder="Email Address"
             className="w-full p-2 border border-gray-300 rounded"
             onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            required
           />
-
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="w-full p-2 border border-gray-300 rounded"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            required
+          />
           <button className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition">
             Sign in now
           </button>

@@ -1,11 +1,23 @@
-import  { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, Link } from "react-router-dom";
 import { supabase } from "./supabase/client";
 
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    async function fetchUser() {
+      const { data, error } = await supabase.auth.getUser();
+      console.log('Datos de usuario en fetchUser:', data);
+      if (data?.user) {
+        setUserName(data.user.user_metadata?.nombre || data.user.name || "Usuario");
+      }
+    }
+    fetchUser();
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
@@ -49,7 +61,7 @@ const DashboardLayout = ({ children }) => {
                 alt="User Icon"
                 className="w-20 h-20 rounded-full mb-2"
               />
-              <span className="text-sm">Victor</span>
+              <span className="text-sm">{userName}</span>
               <div className="flex space-x-4 mt-3">
                 <a href="#!" className="text-white text-lg hover:text-orange-500">
                   <i className="zmdi zmdi-settings"></i>
@@ -57,7 +69,7 @@ const DashboardLayout = ({ children }) => {
                 <a
                   href="#!"
                   className="text-white text-lg hover:text-orange-500"
-                  onClick={handleLogout} // Link the logout function
+                  onClick={handleLogout}
                 >
                   <i className="zmdi zmdi-power"></i>
                 </a>
@@ -132,17 +144,17 @@ const DashboardLayout = ({ children }) => {
           </div>
         </aside>
       )}
-      <main className="flex-1 p-6 overflow-y-auto h-full"> {/* Adjust height */}
-        {!isSidebarVisible && (
-          <button
-            onClick={toggleSidebar}
-            className="mb-4 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700"
-          >
-            →
-          </button>
-        )}
-        {children || <Outlet />}
-      </main>
+   <main className="flex-1 p-6 overflow-y-auto h-full">
+  {!isSidebarVisible && (
+    <button
+      onClick={toggleSidebar}
+      className="mb-4 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700"
+    >
+      →
+    </button>
+  )}
+  <Outlet />
+</main>
     </div>
   );
 };
