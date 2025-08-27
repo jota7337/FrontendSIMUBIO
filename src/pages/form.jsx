@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import {  useLocation } from 'react-router-dom';
+import { supabase } from '../supabase/client';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { createEspecie, updateEspecie, deleteEspecie } from '../apis/Especie'; 
 import EspeciesForm from '../components/especies/form/especiesForm';
 import { DatosSchema, EventoSchema,  FamilySchema,  OtherSchema, RegistreSchema, TaxonRankSchema, TaxonSchema } from '../lib/validations';
 import { camposDatos, camposEvento, camposFamilia, camposOtros, camposRegsitre, camposTaxon, camposTaxonRank } from '../lib/fields';
 
 const Form = () => {
+  const navigate = useNavigate();
   const [activeForm, setActiveForm] = useState(null);
   const location = useLocation();
   const [formData, setFormData] = useState({}); 
@@ -29,23 +31,38 @@ const Form = () => {
 
   
   const handleCreate = async () => {
-    const { data, error } = await createEspecie(formData);
+    console.log('Datos enviados al crear especie:', formData);
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData?.user?.id) {
+      alert('No se pudo obtener el usuario actual');
+      return;
+    }
+    const userId = userData.user.id;
+    const { data, error } = await createEspecie(formData, userId);
     if (error) alert('Error al crear especie');
-    else alert('Especie creada');
+    else {
+      alert('Especie creada');
+      navigate('/especies');
+    }
   };
 
 
   const handleUpdate = async () => {
     if (!editingId) return alert('No hay especie para actualizar');
+    console.log('Datos enviados al actualizar especie:', formData);
     const { data, error } = await updateEspecie(editingId, formData);
     if (error) alert('Error al actualizar especie');
-    else alert('Especie actualizada');
+    else {
+      alert('Especie actualizada');
+      navigate('/especies');
+    }
   };
 
  
   const handleDelete = async () => {
     if (!editingId) return alert('No hay especie para eliminar');
-    const { data, error } = await deleteEspecie(editingId);
+  console.log('Datos enviados al eliminar especie:', { id: editingId, ...formData });
+  const { data, error } = await deleteEspecie(editingId);
     if (error) alert('Error al eliminar especie');
     else alert('Especie eliminada');
   };
@@ -95,9 +112,11 @@ const Form = () => {
         </div>
 
         <div className="flex space-x-2 mt-4">
-          <button onClick={handleCreate} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Crear</button>
-          <button onClick={handleUpdate} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Actualizar</button>
-          <button onClick={handleDelete} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Eliminar</button>
+          {!editingId ? (
+            <button onClick={handleCreate} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Crear</button>
+          ) : (
+            <button onClick={handleUpdate} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Actualizar</button>
+          )}
         </div>
 
         <button onClick={handleGoToDashboard} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-4">Volver</button>
