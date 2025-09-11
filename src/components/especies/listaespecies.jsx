@@ -70,9 +70,25 @@ const ListEspecies = () => {
     setIsDialogOpen(true);
   };
 
+  // Filtrar datos por búsqueda
   const filteredData = data.filter((item) =>
     (item.scientificName || item.nombre || "").toLowerCase().includes(search.toLowerCase())
   );
+
+  // Paginación
+  const itemsPerPage = 20;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
 
   return (
      <div>
@@ -112,7 +128,7 @@ const ListEspecies = () => {
                 <td colSpan="8" className="text-center p-4 text-gray-500">Cargando...</td>
               </tr>
             ) : filteredData.length > 0 ? (
-              filteredData.map((item, index) => (
+              paginatedData.map((item, index) => (
                 <tr
                   key={item.id || index}
                   className="border-b hover:bg-gray-50 cursor-pointer"
@@ -162,6 +178,26 @@ const ListEspecies = () => {
             )}
           </tbody>
         </table>
+        {/* Controles de paginación */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-4 gap-2">
+            <button
+              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Anterior
+            </button>
+            <span className="mx-2">Página {currentPage} de {totalPages}</span>
+            <button
+              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Siguiente
+            </button>
+          </div>
+        )}
       </div>
       <SpeciesDetailsDialog
         isOpen={isDialogOpen}

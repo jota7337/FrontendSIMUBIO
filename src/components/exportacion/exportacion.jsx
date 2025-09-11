@@ -1,54 +1,96 @@
-
 import { useState, useEffect } from "react";
-import { Trash, Info, FileText, FileSpreadsheet } from "lucide-react";
-import { getEspecies } from '../../apis/Especie';
-
+import { Trash, Info, FileText, FileSpreadsheet, Upload } from "lucide-react";
+import { getReferences } from '../../apis/reference';
+import { createEspeciesBatch, getEspecieByReference } from '../../apis/Especie';
+import { parseExcelToEspeciesRows } from "../../lib/excel-especies-logic";
+import { supabase } from "../../supabase/client";
 
 const ExportEspecie = () => {
-  const [observations, setObservations] = useState([]);
+  const [referenceObservations, setReferenceObservations] = useState([]);
+    const [uploadLog, setUploadLog] = useState("");
+    const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data, error } = await getEspecies();
-      if (!error && Array.isArray(data)) {
-  
-        const obs = data.map((item, idx) => ({
-          id: item.id || idx,
-          category: item.family || item.class || 'Sin categoría',
-          name: item.scientificName || item.nombre || '-',
-          observation: item.observation || item.occurrenceRemarks || '-',
-        }));
-        setObservations(obs);
-      } else {
-        setObservations([]);
-      }
-    };
-    fetchData();
-  }, []);
+    const handleUploadExcel = async () => {
+    try {
+      setUploading(true);
+      setUploadLog("📂 Selecciona un archivo Excel...");
 
-  const handleDelete = (id) => {
-    setObservations(observations.filter(obs => obs.id !== id));
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".xlsx,.xls,.csv";
+
+      input.onchange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) {
+          setUploadLog("Operación cancelada.");
+          setUploading(false);
+          return;
+        }
+
+        try {
+          setUploadLog("⏳ Leyendo y transformando archivo...");
+          // 1) Parsear a filas con columnas válidas
+          const rows = await parseExcelToEspeciesRows(file, "Plantilla");
+          console.log("Filas parseadas:", rows);
+          // 2) Obtener userId con tu supabase
+          const { data, error } = await supabase.auth.getUser();
+          if (error) throw error;
+          const userId = data?.user?.id;
+          if (!userId) throw new Error("No hay usuario autenticado.");
+
+          // 3) Insertar en lote usando tu API (sin crear cliente aquí)
+          const { count } = await createEspeciesBatch(rows, userId);
+
+          setUploadLog(`✔ Insertadas ${count} filas en public.especies.`);
+          // 4) Refrescar la lista para que se vea actualizado
+          await fetchAllObservations();
+        } catch (err) {
+          setUploadLog("✖ Error: " + err.message);
+        } finally {
+          setUploading(false);
+        }
+      };
+
+      input.click();
+    } catch (err) {
+      setUploadLog("✖ Error: " + err.message);
+      setUploading(false);
+    }
   };
 
-  const groupedObservations = observations.reduce((acc, obs) => {
-    acc[obs.category] = acc[obs.category] || [];
-    acc[obs.category].push(obs);
-    return acc;
-  }, {});
+  async function fetchAllObservations() {
+      const references = await getReferences();
+      const allData = [];
+      for (const ref of references) {
+        const especies = await getEspecieByReference(ref.id);
+        if (Array.isArray(especies) && especies.length > 0) {
+          const obs = especies.map((item, idx) => ({
+            id: item.id || idx,
+            reference: ref.referencia,
+            name: item.scientificName || item.nombre || '-',
+            observation: item.observation || item.occurrenceRemarks || '-',
+          }));
+          allData.push({ referencia: ref.referencia, observations: obs });
+        }
+      }
+      setReferenceObservations(allData);
+    }
 
-  // Exportar por tabulaciones
-  const handleExportTab = (category) => {
-    const rows = groupedObservations[category];
-    if (!rows || rows.length === 0) return;
-    // Encabezado
+  useEffect(() => {
+  
+    fetchAllObservations();
+  }, []);
+
+  const handleExportTab = (referencia) => {
+    const refData = referenceObservations.find(r => r.referencia === referencia);
+    if (!refData || refData.observations.length === 0) return;
     let content = 'Nombre\tObservación\n';
-    content += rows.map(r => `${r.name}\t${r.observation}`).join('\n');
-    // Descargar archivo
+    content += refData.observations.map(r => `${r.name}\t${r.observation}`).join('\n');
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `observaciones_${category}.txt`;
+    a.download = `observaciones_${referencia}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -56,54 +98,69 @@ const ExportEspecie = () => {
   };
 
   return (
-  
     <div className="p-6 bg-gray-100 min-h-screen">
-    <h2 className="text-xl font-semibold mb-4">Observaciones por Categoría</h2>
-
-    {Object.keys(groupedObservations).map(category => (
-      <div key={category} className="mb-6 bg-white shadow-md rounded-lg p-4">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-lg font-semibold text-gray-700">{category}</h3>
-          <div className="flex gap-2">
-            <button className="flex items-center bg-green-500 text-white px-3 py-1 rounded-lg">
-              <FileSpreadsheet className="w-4 h-4 mr-1" /> Exportar Excel
-            </button>
-            <button className="flex items-center bg-blue-500 text-white px-3 py-1 rounded-lg" onClick={() => handleExportTab(category)}>
-              <FileText className="w-4 h-4 mr-1" /> Exportar Tabulaciones
-            </button>
-          </div>
-        </div>
-
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="p-2 text-left">Nombre</th>
-              <th className="p-2 text-left">Observación</th>
-              <th className="p-2 text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {groupedObservations[category].map(obs => (
-              <tr key={obs.id} className="border-b">
-                <td className="p-2">{obs.name}</td>
-                <td className="p-2">{obs.observation}</td>
-                <td className="p-2 text-center">
-                  <button className="mr-2 text-blue-500 hover:text-blue-700">
-                    <Info className="w-5 h-5" />
-                  </button>
-                  <button onClick={() => handleDelete(obs.id)} className="text-red-500 hover:text-red-700">
-                    <Trash className="w-5 h-5" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-xl font-semibold mb-4">Exportar Observaciones por Referencia</h2>
+          <button
+          className="flex items-center bg-indigo-600 text-white px-3 py-1 rounded-lg disabled:opacity-50"
+          onClick={handleUploadExcel}
+          disabled={uploading}
+          title="Subir Excel a public.especies"
+        >
+          <Upload className="w-4 h-4 mr-1" />
+          {uploading ? "Procesando..." : "Cargar Excel a especies"}
+        </button>
       </div>
-    ))}
-  </div>
-  
 
-);
+      {uploadLog && (
+        <pre className="mb-6 p-3 bg-white rounded-lg border text-sm whitespace-pre-wrap">
+          {uploadLog}
+        </pre>
+      )}
+      
+      {referenceObservations.map(ref => (
+        <div key={ref.referencia} className="mb-6 bg-white shadow-md rounded-lg p-4">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-semibold text-gray-700">{ref.referencia}</h3>
+            <div className="flex gap-2">
+              <button className="flex items-center bg-green-500 text-white px-3 py-1 rounded-lg">
+                <FileSpreadsheet className="w-4 h-4 mr-1" /> Exportar Excel
+              </button>
+              <button className="flex items-center bg-blue-500 text-white px-3 py-1 rounded-lg" onClick={() => handleExportTab(ref.referencia)}>
+                <FileText className="w-4 h-4 mr-1" /> Exportar Tabulaciones
+              </button>
+            </div>
+          </div>
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="p-2 text-left">Nombre</th>
+                <th className="p-2 text-left">Observación</th>
+                <th className="p-2 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ref.observations.map(obs => (
+                <tr key={obs.id} className="border-b">
+                  <td className="p-2">{obs.name}</td>
+                  <td className="p-2">{obs.observation}</td>
+                  <td className="p-2 text-center">
+                    <button className="mr-2 text-blue-500 hover:text-blue-700">
+                      <Info className="w-5 h-5" />
+                    </button>
+                    <button className="text-red-500 hover:text-red-700">
+                      <Trash className="w-5 h-5" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </div>
+    
+  );
 };
+
 export default ExportEspecie;
