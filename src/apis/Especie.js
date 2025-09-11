@@ -47,3 +47,22 @@ export async function getEspecieByReference(reference_id) {
   return response.data;
 }
 
+
+export async function createEspeciesBatch(rows, userId) {
+  console.log("Creando especies en batch para userId:", userId);
+
+  const payload = rows.map(r => ({ ...r, created_by: userId }));
+  console.log("Payload para inserción en batch:", payload);
+
+  
+  const { data, error, count } = await supabase
+    .from('especies')
+    .insert(payload, { count: 'exact' });
+
+  if (error) {
+    console.error('Error al crear especies (batch):', error);
+    throw error;
+  }
+  return { data, count: count ?? payload.length };
+}
+

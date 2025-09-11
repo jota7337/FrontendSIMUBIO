@@ -16,3 +16,16 @@ const userId = userData.user.id;
     console.log('Datos traídos de referencia iddd:', userId);
   return data;
 }
+
+
+export async  function getReferences() {
+  const { data, error } = await supabase
+    .from('reference')
+    .select('id, referencia');
+  if (error) {
+    console.error('Error al obtener referencias:', error);
+    return [];
+  }
+  console.log('Datos traídos de referencia:', data);
+  return data;
+}
