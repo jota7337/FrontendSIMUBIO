@@ -2,6 +2,8 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
 
+import { referencias } from "../../../lib/fields"
+
 function EspeciesForm({ initialData = {}, onChange, fields = [], zodSchema }) {
     console.log("Información recibida en EspeciesForm (initialData):", initialData)
 
@@ -43,14 +45,25 @@ function EspeciesForm({ initialData = {}, onChange, fields = [], zodSchema }) {
                 <div key={name} className="flex flex-col">
                     <label className={labelCon}>{label}</label>
                     {type === "select" ? (
-                        <select className={InputCon} {...register(name)}>
-                            <option value="">Seleccione una opción</option>
-                            {options.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                        </select>
+                        name === "reference_by" && referencias.length > 0 ? (
+                            <select className={InputCon} {...register(name)}>
+                                <option value="">Seleccione una opción</option>
+                                {referencias.map((ref) => (
+                                    <option key={ref.id} value={ref.id}>
+                                        {ref.referencia}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <select className={InputCon} {...register(name)}>
+                                <option value="">Seleccione una opción</option>
+                                {options.map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>
+                        )
                     ) : (
                         <input type="text" className={InputCon} {...register(name)} />
                     )}

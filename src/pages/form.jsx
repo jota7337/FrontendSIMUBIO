@@ -23,6 +23,8 @@ import {
     camposTaxonRank,
 } from "../lib/fields"
 
+import { cargarReferencias } from "../lib/fields"
+
 const Form = () => {
     const navigate = useNavigate()
     const [activeForm, setActiveForm] = useState(null)
@@ -39,6 +41,8 @@ const Form = () => {
             setFormData(location.state.species)
             setEditingId(location.state.species.id || null)
         }
+
+        cargarReferencias()
     }, [location.state])
 
     const handleButtonClick = (formIndex) => {

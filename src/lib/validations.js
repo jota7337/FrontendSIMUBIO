@@ -3,7 +3,7 @@ import { object, number, string } from "zod"
 export const DatosSchema = object({
     occurrenceID: string()
         .regex(
-            /^[A-Z]{2,10}:[\w\-]+:[\w\-]+$/,
+            /^([A-Z]{2,10}):([\p{L}\p{M}'\-\s]{2,100}):([0-9]{4}-[1-9][0-9]*):([\p{L}\p{M}'\-\s]{1,50})(\d{6})$/u,
             "Formato inválido. Ejemplos: UCO:RESCATE_FAUNA_MULATOSII:1 o UNIVALLE:CRM-UV:1974-001-1"
         )
         .optional(),
@@ -192,7 +192,9 @@ export const OtherSchema = object({
     locationRemarks: string().optional(),
     verbatimLatitude: string().optional(),
     verbatimLongitude: string().optional(),
-    verbatimCoordinates: string().optional(),
+    verbatimCoordinates: string()
+        .regex(/^\d{1,2} \d{1,2} \d{1,2}(?:,\d+)?N; \d{1,3} \d{1,2} \d{1,2}(?:,\d+)?W$/, "DD MM SS[,dec]N; DDD MM SS[,dec]W")
+        .optional(),
     verbatimCoordinateSystem: string().optional(),
     verbatimSRS: string().optional(),
     decimalLatitude: number({
