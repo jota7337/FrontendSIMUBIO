@@ -1,20 +1,25 @@
 import { useState, useEffect } from "react"
-import { Outlet, Link } from "react-router-dom"
-import { supabase } from "./supabase/client"
+import { Outlet, Link, useNavigate } from "react-router-dom"
+import { getUsuarioPorId } from "./apis/usuarios"
 
 const DashboardLayout = () => {
     const [isSidebarVisible, setIsSidebarVisible] = useState(true)
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
     const [userName, setUserName] = useState("")
+    async function fetchUser() {
+        // Obtener el id del usuario logeado desde supabase
+        const { data: authData } = await import("./supabase/client").then((m) => m.supabase.auth.getUser())
+        const userId = authData?.user?.id
+        if (!userId) {
+            setUserName("Usuario")
+            return
+        }
+        const { data } = await getUsuarioPorId(userId)
+        setUserName(data?.full_name || data?.email || "Usuario")
+    }
+    const navigate = useNavigate()
 
     useEffect(() => {
-        async function fetchUser() {
-            const { data, error } = await supabase.auth.getUser()
-            console.log("Datos de usuario en fetchUser:", data)
-            if (data?.user) {
-                setUserName(data.user.user_metadata?.nombre || data.user.name || "Usuario")
-            }
-        }
         fetchUser()
     }, [])
 
@@ -53,7 +58,12 @@ const DashboardLayout = () => {
                         </button>
                         <div className="text-xl font-bold text-center mb-6">UNIVERSIDAD EL BOSQUE</div>
                         <div className="flex flex-col items-center border-t border-b border-white border-opacity-30 py-4">
-                            <img src="./assets/img/avatar.jpg" alt="User Icon" className="w-20 h-20 rounded-full mb-2" />
+                            <img
+                                src="./assets/img/avatar.jpg"
+                                alt="User Icon"
+                                className="w-20 h-20 rounded-full mb-2 cursor-pointer"
+                                onClick={() => navigate("/perfil")}
+                            />
                             <span className="text-sm">{userName}</span>
                             <div className="flex space-x-4 mt-3">
                                 <a href="#!" className="text-white text-lg hover:text-orange-500">

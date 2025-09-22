@@ -15,6 +15,7 @@ import SpeciesCatalog from "./components/curandores/curandores"
 import UsuariosAdmin from "./components/usuarios/UsuariosAdmin"
 import DashboardLayout from "./DashboardLayout"
 import ReferenciasPage from "./pages/referencias"
+import PerfilUsuario from "./pages/PerfilUsuario"
 
 function App() {
     const navigate = useNavigate()
@@ -49,6 +50,7 @@ function App() {
                         <Route path="/curandores" element={<SpeciesCatalog />} />
                         <Route path="/usuarios" element={<UsuariosAdmin />} />
                         <Route path="/referencias" element={<ReferenciasPage />} />
+                        <Route path="/perfil" element={<PerfilUsuario />} />
                     </Route>
 
                     {/* 404 */}

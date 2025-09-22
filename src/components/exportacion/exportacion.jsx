@@ -4,11 +4,27 @@ import { getReferences } from "../../apis/reference"
 import { createEspeciesBatch, getEspecieByReference } from "../../apis/Especie"
 import { parseExcelToEspeciesRows } from "../../lib/excel-especies-logic"
 import { supabase } from "../../supabase/client"
+import { exportEspeciesWithTemplate } from "../../lib/table-especie-logic"
 
 const ExportEspecie = () => {
     const [referenceObservations, setReferenceObservations] = useState([])
     const [uploadLog, setUploadLog] = useState("")
     const [uploading, setUploading] = useState(false)
+    const [dateRanges, setDateRanges] = useState({})
+
+    const handleDateChange = (referencia, type, value) => {
+        setDateRanges((prev) => ({
+            ...prev,
+            [referencia]: {
+                ...prev[referencia],
+                [type]: value,
+            },
+        }))
+    }
+
+    const handleExport = () => {
+        exportEspeciesWithTemplate("startDate", "endDate")
+    }
 
     const handleUploadExcel = async () => {
         try {
@@ -128,6 +144,26 @@ const ExportEspecie = () => {
                                 <FileText className="w-4 h-4 mr-1" /> Exportar Tabulaciones
                             </button>
                         </div>
+                    </div>
+                    <div className="flex flex-col gap-2 mb-4">
+                        <input
+                            type="date"
+                            value={dateRanges[ref.referencia]?.startDate || ""}
+                            onChange={(e) => handleDateChange(ref.referencia, "startDate", e.target.value)}
+                            className="border p-2"
+                        />
+                        <input
+                            type="date"
+                            value={dateRanges[ref.referencia]?.endDate || ""}
+                            onChange={(e) => handleDateChange(ref.referencia, "endDate", e.target.value)}
+                            className="border p-2"
+                        />
+                        <button
+                            onClick={() => handleExport(ref.referencia)}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow"
+                        >
+                            Exportar especies en plantilla
+                        </button>
                     </div>
                     <table className="w-full border-collapse">
                         <thead>

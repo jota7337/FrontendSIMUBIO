@@ -1,5 +1,5 @@
 // ...existing code...
-
+import { supabase } from "../supabase/client"
 export async function getReferencesByUser() {
     const { data: userData } = await supabase.auth.getUser()
     const userId = userData.user.id
@@ -12,8 +12,6 @@ export async function getReferencesByUser() {
     console.log("Datos traídos de referencia iddd:", userId)
     return data
 }
-
-import { supabase } from "../supabase/client"
 
 export async function getReferencias() {
     const { data, error } = await supabase
