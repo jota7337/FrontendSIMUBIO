@@ -14,9 +14,8 @@ export async function updateEspecie(id, data) {
 }
 
 export async function deleteEspecie(id) {
-    console.log("Eliminando especie con ID (API):", id)
     const response = await supabase.from("especies").delete().eq("id", id)
-    console.log("Respuesta completa de deleteEspecie:", response)
+
     if (response.error) {
         console.error("Error al eliminar especie:", response.error)
     }
@@ -25,7 +24,7 @@ export async function deleteEspecie(id) {
 
 export async function getEspecies() {
     const response = await supabase.from("especies").select("*")
-    console.log("Respuesta completa de deleteEspecie:", response)
+
     if (response.error) {
         console.error("Error al eliminar especie:", response.error)
     }
@@ -72,10 +71,7 @@ export async function getEspecieByReference(reference_id) {
 }
 
 export async function createEspeciesBatch(rows, userId) {
-    console.log("Creando especies en batch para userId:", userId)
-
     const payload = rows.map((r) => ({ ...r, created_by: userId }))
-    console.log("Payload para inserción en batch:", payload)
 
     const { data, error, count } = await supabase.from("especies").insert(payload, { count: "exact" })
 

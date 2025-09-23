@@ -47,7 +47,7 @@ const ExportEspecie = () => {
                     setUploadLog("⏳ Leyendo y transformando archivo...")
                     // 1) Parsear a filas con columnas válidas
                     const rows = await parseExcelToEspeciesRows(file, "Plantilla")
-                    console.log("Filas parseadas:", rows)
+
                     // 2) Obtener userId con tu supabase
                     const { data, error } = await supabase.auth.getUser()
                     if (error) throw error

@@ -64,20 +64,18 @@ const ListEspecies = () => {
     }
 
     const handleAddClick = () => {
-        console.log("Datos enviados al formulario (add):", { species: null, mode: "add" })
         navigate("/form", { state: { species: null, mode: "add" } })
     }
 
     const handleEditClick = (e, species) => {
         e.stopPropagation()
-        console.log("Datos enviados al formulario (edit):", { species: { ...species }, mode: "edit" })
+
         navigate("/form", { state: { species: { ...species }, mode: "edit" } })
     }
 
     const handleDeleteClick = async (e, species) => {
         e.stopPropagation()
         if (window.confirm(`¿Seguro que deseas eliminar ${species.scientificName || species.nombre}?`)) {
-            console.log("Eliminando especie con ID:", species.id)
             await deleteEspecie(species.id)
             setData((prev) => prev.filter((item) => item.id !== species.id))
         }

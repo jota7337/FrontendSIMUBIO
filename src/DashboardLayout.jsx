@@ -7,14 +7,7 @@ const DashboardLayout = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
     const [userName, setUserName] = useState("")
     async function fetchUser() {
-        // Obtener el id del usuario logeado desde supabase
-        const { data: authData } = await import("./supabase/client").then((m) => m.supabase.auth.getUser())
-        const userId = authData?.user?.id
-        if (!userId) {
-            setUserName("Usuario")
-            return
-        }
-        const { data } = await getUsuarioPorId(userId)
+        const { data } = await getUsuarioPorId()
         setUserName(data?.full_name || data?.email || "Usuario")
     }
     const navigate = useNavigate()
@@ -32,7 +25,6 @@ const DashboardLayout = () => {
     }
 
     const handleLogout = async () => {
-        console.log("Logging out...")
         const { error } = await supabase.auth.signOut()
         if (error) {
             console.error("Error logging out:", error.message)
@@ -120,12 +112,12 @@ const DashboardLayout = () => {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link
+                                    {/* <Link
                                         to="/Nfts"
                                         className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                                     >
                                         Nfts
-                                    </Link>
+                                    </Link> */}
                                 </li>
                                 <li>
                                     <Link

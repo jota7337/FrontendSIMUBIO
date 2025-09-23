@@ -43,7 +43,7 @@ const SpeciesCatalog = () => {
         e.stopPropagation()
         // Excluir estado_especie
         const { estado_especie, ...speciesData } = species
-        console.log("Datos enviados al formulario (curador):", { species: { ...speciesData }, mode: "curador" })
+
         navigate("/form", { state: { species: { ...speciesData }, mode: "curador", fromCatalog: true } })
     }
 
