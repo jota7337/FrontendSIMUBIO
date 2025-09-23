@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { getUsuarios, createUsuario, updateUsuarioAdmin as updateUsuario, deleteUsuario } from "../../apis/admin-users"
 
+
 const initialForm = { nombre: "", email: "", password: "", rol: "usuario" }
 
 const UsuariosAdmin = () => {
@@ -189,6 +190,7 @@ const UsuariosAdmin = () => {
             <div className="overflow-x-auto">
                 <table className="w-full bg-white border border-gray-200 shadow-md rounded-lg">
                     <thead className="bg-gray-100 border-b">
+
                         <tr>
                             <th className="text-left p-3">Nombre</th>
                             <th className="text-left p-3">Email</th>

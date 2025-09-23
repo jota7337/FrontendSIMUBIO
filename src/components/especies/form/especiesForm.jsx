@@ -4,6 +4,7 @@ import { useEffect } from "react"
 
 import { referencias } from "../../../lib/fields"
 
+
 function EspeciesForm({ initialData = {}, onChange, fields = [], zodSchema }) {
     const labelCon = "text-gray-600 text-sm mb-1"
     const InputCon = "border border-gray-300 rounded-md p-2 mt-1 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-600"

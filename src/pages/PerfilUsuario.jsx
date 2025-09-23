@@ -9,6 +9,7 @@ const PerfilUsuario = () => {
     const [saving, setSaving] = useState(false)
     async function fetchUser() {
         const { data } = await getUsuarioPorId()
+
         setUser(data)
         setEditData({
             full_name: data?.full_name || "",

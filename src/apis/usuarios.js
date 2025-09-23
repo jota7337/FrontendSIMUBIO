@@ -22,13 +22,16 @@ export async function getUsuarioPorId() {
 
     return { data, error }
 }
+
 export async function getRoles() {
     const { data, error } = await supabase.from("roles").select("*")
     return { data, error }
 }
 
 export async function updateUsuario(id, nombre) {
+
     const { data, error } = await supabase.from("profiles").update({ full_name: nombre }).eq("id", id)
+
 
     return { data, error }
 }
