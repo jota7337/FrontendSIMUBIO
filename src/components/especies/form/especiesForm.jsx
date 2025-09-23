@@ -5,8 +5,6 @@ import { useEffect } from "react"
 import { referencias } from "../../../lib/fields"
 
 function EspeciesForm({ initialData = {}, onChange, fields = [], zodSchema }) {
-    console.log("Información recibida en EspeciesForm (initialData):", initialData)
-
     const labelCon = "text-gray-600 text-sm mb-1"
     const InputCon = "border border-gray-300 rounded-md p-2 mt-1 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-600"
 
@@ -35,7 +33,6 @@ function EspeciesForm({ initialData = {}, onChange, fields = [], zodSchema }) {
     }, [watch, onChange])
 
     const onSubmit = (data) => {
-        console.log("Datos válidos:", data)
         if (onChange) onChange(data)
     }
 

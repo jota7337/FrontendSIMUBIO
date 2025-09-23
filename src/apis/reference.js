@@ -8,8 +8,7 @@ export async function getReferencesByUser() {
         console.error("Error al obtener referencias por usuario:", error)
         return []
     }
-    console.log("Datos traídos de referencia:", data)
-    console.log("Datos traídos de referencia iddd:", userId)
+
     return data
 }
 
@@ -49,6 +48,6 @@ export async function getReferences() {
         console.error("Error al obtener referencias:", error)
         return []
     }
-    console.log("Datos traídos de referencia:", data)
+
     return data
 }

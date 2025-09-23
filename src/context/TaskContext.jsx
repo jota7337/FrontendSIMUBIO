@@ -18,7 +18,6 @@ export const TaskContextProvider = ({ children }) => {
         // Obtener el usuario autenticado
         const { data: userData, error: userError } = await supabase.auth.getUser()
         const user = userData?.user // Asegurarse de que userData no sea null o undefined
-        console.log(user)
 
         if (userError) {
             console.error("Error al obtener el usuario:", userError.message)
@@ -26,7 +25,6 @@ export const TaskContextProvider = ({ children }) => {
         }
 
         if (!user) {
-            console.log("El usuario no está autenticado")
             return
         }
 
@@ -44,7 +42,6 @@ export const TaskContextProvider = ({ children }) => {
         }
 
         setTasks(tasksData) // Actualizar el estado con las tareas obtenidas
-        console.log("Tareas obtenidas:", tasksData)
     }
 
     const createTask = async (taskName) => {
@@ -84,8 +81,6 @@ export const TaskContextProvider = ({ children }) => {
             } else {
                 console.error("La respuesta de Supabase no es un array:", data)
             }
-
-            console.log("Tarea creada:", data)
         } catch (error) {
             console.error("Error al crear la tarea:", error.message)
         } finally {

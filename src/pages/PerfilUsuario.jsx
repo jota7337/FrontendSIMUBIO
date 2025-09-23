@@ -8,14 +8,7 @@ const PerfilUsuario = () => {
     const [editMode, setEditMode] = useState(false)
     const [saving, setSaving] = useState(false)
     async function fetchUser() {
-        // Obtener el id del usuario logeado desde supabase
-        const { data: authData } = await import("../supabase/client").then((m) => m.supabase.auth.getUser())
-        const userId = authData?.user?.id
-        if (!userId) {
-            setLoading(false)
-            return
-        }
-        const { data } = await getUsuarioPorId(userId)
+        const { data } = await getUsuarioPorId()
         setUser(data)
         setEditData({
             full_name: data?.full_name || "",

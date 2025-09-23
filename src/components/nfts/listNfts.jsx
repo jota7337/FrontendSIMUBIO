@@ -38,7 +38,6 @@ export default function ContractsList() {
                         key={contract.id}
                         className="bg-gray-800 text-white p-4 rounded-lg shadow-md cursor-pointer"
                         onClick={() => {
-                            console.log("Seleccionado:", contract)
                             setSelectedContract(contract)
                         }}
                     >

@@ -17,7 +17,7 @@ function Login() {
             }
             // Obtener el usuario y su rol
             const { user } = data
-            console.log("Usuario autenticado:", user)
+
             // Suponiendo que el rol está en user.user_metadata.rol
             const rol = user?.user_metadata?.rol
             if (rol === "admin") {

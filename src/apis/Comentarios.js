@@ -50,8 +50,7 @@ export async function getComentariosByAuthor() {
     if (error) {
         console.error("Error al obtener comentarios:", error)
     }
-    console.log("Datos traídos de comentarios:", data)
-    console.log("Datos traídos de comentarios iddd:", authorId)
+
     return data || []
 }
 

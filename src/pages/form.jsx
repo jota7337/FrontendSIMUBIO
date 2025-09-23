@@ -54,7 +54,6 @@ const Form = () => {
     }
 
     const handleCreate = async () => {
-        console.log("Datos enviados al crear especie:", formData)
         const { data: userData, error: userError } = await supabase.auth.getUser()
         if (userError || !userData?.user?.id) {
             alert("No se pudo obtener el usuario actual")
@@ -91,9 +90,9 @@ const Form = () => {
 
     const handleUpdate = async () => {
         if (!editingId) return alert("No hay especie para actualizar")
-        console.log("Datos enviados al actualizar especie:", formData)
+
         const { data, error } = await updateEspecie(editingId, formData)
-        console.log("Respuesta de la actualización:", error)
+
         if (error) alert("Error al actualizar especie")
         else {
             alert("Especie actualizada")
@@ -103,7 +102,7 @@ const Form = () => {
 
     const handleDelete = async () => {
         if (!editingId) return alert("No hay especie para eliminar")
-        console.log("Datos enviados al eliminar especie:", { id: editingId, ...formData })
+
         const { data, error } = await deleteEspecie(editingId)
         if (error) alert("Error al eliminar especie")
         else alert("Especie eliminada")
