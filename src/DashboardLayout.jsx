@@ -82,7 +82,7 @@ const DashboardLayout = () => {
                                         to="/Especies"
                                         className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                                     >
-                                        Especies
+                                        Espécimen en consulta
                                     </Link>
                                 </li>
 
@@ -91,7 +91,7 @@ const DashboardLayout = () => {
                                         to="/curandores"
                                         className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                                     >
-                                        Especies a cargo
+                                        Espécimenes a cargo
                                     </Link>
                                 </li>
 
