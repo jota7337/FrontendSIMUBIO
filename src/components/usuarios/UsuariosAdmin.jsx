@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react"
 import { getUsuarios, createUsuario, updateUsuarioAdmin as updateUsuario, deleteUsuario } from "../../apis/admin-users"
 
-
-const initialForm = { nombre: "", email: "", password: "", rol: "usuario" }
+const initialForm = { nombre: "", email: "", password: "", rol: "usuario", scientificName: "", ocid: "" }
 
 const UsuariosAdmin = () => {
     const [usuarios, setUsuarios] = useState([])
@@ -80,6 +79,8 @@ const UsuariosAdmin = () => {
             email: usuario.email || "",
             password: "",
             rol: usuario.roles?.name || "usuario",
+            scientificName: usuario.scientificName || "",
+            ocid: usuario.ocid || "",
         })
         setEditingId(usuario.id)
         setModalOpen(true)
@@ -151,6 +152,20 @@ const UsuariosAdmin = () => {
                         className="border p-2 rounded"
                         required
                     />
+                    <input
+                        name="scientificName"
+                        value={form.scientificName}
+                        onChange={handleChange}
+                        placeholder="Nombre científico"
+                        className="border p-2 rounded"
+                    />
+                    <input
+                        name="ocid"
+                        value={form.ocid}
+                        onChange={handleChange}
+                        placeholder="OCID"
+                        className="border p-2 rounded"
+                    />
                     {!editingId && (
                         <input
                             name="password"
@@ -195,6 +210,8 @@ const UsuariosAdmin = () => {
                             <th className="text-left p-3">Nombre</th>
                             <th className="text-left p-3">Email</th>
                             <th className="text-left p-3">Rol</th>
+                            <th className="text-left p-3">Nombre científico</th>
+                            <th className="text-left p-3">OCID</th>
                             <th className="text-left p-3">Fecha Creación</th>
                             <th className="text-left p-3">Acciones</th>
                         </tr>
@@ -202,7 +219,7 @@ const UsuariosAdmin = () => {
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan="5" className="text-center p-4">
+                                <td colSpan="7" className="text-center p-4">
                                     Cargando...
                                 </td>
                             </tr>
@@ -212,6 +229,8 @@ const UsuariosAdmin = () => {
                                     <td className="p-3">{u.full_name || "—"}</td>
                                     <td className="p-3">{u.email}</td>
                                     <td className="p-3">{u.roles?.name || "usuario"}</td>
+                                    <td className="p-3">{u.scientificName || "—"}</td>
+                                    <td className="p-3">{u.ocid || "—"}</td>
                                     <td className="p-3">{new Date(u.created_at).toLocaleString()}</td>
                                     <td className="p-3 flex gap-2">
                                         <button
@@ -231,7 +250,7 @@ const UsuariosAdmin = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="5" className="text-center p-4">
+                                <td colSpan="7" className="text-center p-4">
                                     No hay usuarios
                                 </td>
                             </tr>
