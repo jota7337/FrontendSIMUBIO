@@ -6,6 +6,8 @@ export default function ObservationsTable() {
     const [observations, setObservations] = useState([])
     const [editingId, setEditingId] = useState(null)
     const [editValue, setEditValue] = useState("")
+    const [filterEspecie, setFilterEspecie] = useState("")
+    const [filterAprobado, setFilterAprobado] = useState("todos")
     async function fetchComentarios() {
         const comentarios = await getComentariosByAuthor()
         const mapped = comentarios.map((c) => ({
@@ -16,6 +18,7 @@ export default function ObservationsTable() {
             especie: c.especies?.scientificName || "Desconocida",
             especieid: c.especies?.id || "Desconocida",
             created_at: c.created_at,
+            campo: c.campo || "N/A",
             aprobado: c.aprobado ?? false,
         }))
         setObservations(mapped)
@@ -43,9 +46,44 @@ export default function ObservationsTable() {
         setObservations(observations.filter((obs) => obs.id !== id))
     }
 
+    // Filtering logic
+    const filteredObservations = observations.filter((obs) => {
+        const matchEspecie = filterEspecie === "" || obs.especie.toLowerCase().includes(filterEspecie.toLowerCase())
+        const matchAprobado =
+            filterAprobado === "todos" ||
+            (filterAprobado === "aprobado" && obs.aprobado) ||
+            (filterAprobado === "pendiente" && !obs.aprobado)
+        return matchEspecie && matchAprobado
+    })
+
     return (
         <div className="w-full p-6 bg-gray-100 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Correcciones </h2>
+            {/* Filtros */}
+            <div className="flex flex-wrap gap-4 mb-4 items-center justify-center">
+                <div>
+                    <label className="block text-sm text-gray-700 mb-1">Filtrar por especie</label>
+                    <input
+                        type="text"
+                        value={filterEspecie}
+                        onChange={(e) => setFilterEspecie(e.target.value)}
+                        placeholder="Nombre científico"
+                        className="border border-gray-300 rounded px-2 py-1"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm text-gray-700 mb-1">Filtrar por estado</label>
+                    <select
+                        value={filterAprobado}
+                        onChange={(e) => setFilterAprobado(e.target.value)}
+                        className="border border-gray-300 rounded px-2 py-1"
+                    >
+                        <option value="todos">Todos</option>
+                        <option value="aprobado">Resuelto</option>
+                        <option value="pendiente">Pendiente</option>
+                    </select>
+                </div>
+            </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm">
                     <thead className="bg-gray-200 text-gray-700">
@@ -53,14 +91,16 @@ export default function ObservationsTable() {
                             <th className="text-left px-6 py-4">Encargado</th>
                             <th className="text-left px-6 py-4">id especie</th>
                             <th className="text-left px-6 py-4">Observación</th>
+                            <th className="text-left px-6 py-4">Campo</th>
                             <th className="text-left px-6 py-4">Fecha</th>
                             <th className="text-left px-6 py-4">Especie</th>
+
                             <th className="text-center px-6 py-4">Aprobado</th>
                             <th className="text-center px-6 py-4">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {observations.map((obs) => (
+                        {filteredObservations.map((obs) => (
                             <tr key={obs.id} className="border-b hover:bg-gray-50">
                                 <td className="px-6 py-4 text-gray-800">{obs.encargado}</td>
                                 <td className="px-6 py-4 text-gray-800">{obs.especieid}</td>
@@ -93,6 +133,7 @@ export default function ObservationsTable() {
                                         obs.observation
                                     )}
                                 </td>
+                                <td className="px-6 py-4 text-gray-800">{obs.campo}</td>
                                 <td className="px-6 py-4 text-gray-800">{new Date(obs.created_at).toLocaleString()}</td>
                                 <td className="px-6 py-4 text-gray-800">{obs.especie}</td>
                                 <td className="px-6 py-4 text-center font-bold">
@@ -118,9 +159,9 @@ export default function ObservationsTable() {
                                 </td>
                             </tr>
                         ))}
-                        {observations.length === 0 && (
+                        {filteredObservations.length === 0 && (
                             <tr>
-                                <td colSpan="5" className="px-6 py-6 text-center text-gray-500">
+                                <td colSpan="7" className="px-6 py-6 text-center text-gray-500">
                                     No hay observaciones disponibles.
                                 </td>
                             </tr>

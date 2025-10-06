@@ -124,7 +124,7 @@ const DashboardLayout = () => {
                                         to="/referencias"
                                         className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
                                     >
-                                        Referencias
+                                        Colección
                                     </Link>
                                 </li>
                                 <li>

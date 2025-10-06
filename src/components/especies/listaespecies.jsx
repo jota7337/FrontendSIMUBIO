@@ -32,7 +32,7 @@ const ListEspecies = () => {
     // Marcar comentario como hecho (aprobado)
     const handleComentarioHecho = async (comentario) => {
         if (comentario.aprobado) return
-        await updateComentario(comentario.id, comentario.cuerpo, true)
+        await updateComentario(comentario.id, comentario.cuerpo, true, comentario.campo)
         setComentariosDialogList((list) => list.map((c) => (c.id === comentario.id ? { ...c, aprobado: true } : c)))
     }
 

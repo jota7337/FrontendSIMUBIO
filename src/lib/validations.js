@@ -88,7 +88,9 @@ export const TaxonSchema = object({
 export const EventoSchema = object({
     recordNumber: string().optional(),
     recordedBy: string().optional(),
-    individualCount: number().optional(),
+    individualCount: string()
+        .regex(/^[0-9]*$/, "Solo se permiten números")
+        .optional(),
     organismQuantity: number().optional(),
     organismQuantityType: string().optional(),
     sex: string().optional(),
@@ -120,6 +122,18 @@ export const EventoSchema = object({
 })
 
 export const RegistreSchema = object({
+    year: string().optional(),
+    month: string().optional(),
+    day: string().optional(),
+    verbatimIdentification: string().optional(),
+    eventTime: string()
+        .regex(
+            /^(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?(?:\/(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?)?$/,
+            "Debe ser una hora válida (HH:mm, HH:mm:ss o un rango HH:mm:ss/HH:mm:ss)"
+        )
+        .optional(),
+    habitat: string().optional(),
+    eventRemarks: string().optional(),
     georeferencedBy: string()
         .regex(
             /^([\p{L}\d .()ÁÉÍÓÚÜáéíóúüñÑ'-]+)(\s?\|\s?[\p{L}\d .()ÁÉÍÓÚÜáéíóúüñÑ'-]+)*$/u,
@@ -156,18 +170,6 @@ export const RegistreSchema = object({
 })
 
 export const FamilySchema = object({
-    year: string().optional(),
-    mes: string().optional(),
-    dia: string().optional(),
-    verbatimIdentification: string().optional(),
-    eventTime: string()
-        .regex(
-            /^(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?(?:\/(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?)?$/,
-            "Debe ser una hora válida (HH:mm, HH:mm:ss o un rango HH:mm:ss/HH:mm:ss)"
-        )
-        .optional(),
-    habitat: string().optional(),
-    eventRemarks: string().optional(),
     locationID: string().optional(),
     continent: string().optional(),
     waterBody: string().optional(),
@@ -212,18 +214,4 @@ export const OtherSchema = object({
         .max(180, { message: "La longitud no puede ser mayor a 180" })
         .optional(),
     geodeticDatum: string().optional(),
-})
-
-export const TaxonRankSchema = object({
-    taxonRank: string().optional(),
-    scientificNameAuthorship: string().optional(),
-    vernacularName: string().optional(),
-    kingdom: string().optional(),
-    phylum: string().optional(),
-    class: string().optional(),
-    order: string().optional(),
-    family: string().optional(),
-    genus: string().optional(),
-    specificEpithet: string().optional(),
-    infraspecificEpithet: string().optional(),
 })

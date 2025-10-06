@@ -12,7 +12,7 @@ export async function updateComentario(id, cuerpo, aprobado) {
 export async function getComentariosByEspecie(especieId) {
     const { data, error } = await supabase
         .from("comentarios")
-        .select(`id, cuerpo , aprobado`)
+        .select(`id, cuerpo , aprobado , campo`)
         .eq("especie_id", especieId)
         .order("created_at", { ascending: false })
     if (error) {
@@ -41,6 +41,7 @@ export async function getComentariosByAuthor() {
       created_at,
       aprobado,
       profiles ( full_name ), 
+      campo,
       especies ( scientificName  , id )
     `
         )
@@ -48,19 +49,19 @@ export async function getComentariosByAuthor() {
         .order("created_at", { ascending: false })
 
     if (error) {
-        console.error("Error al obtener comentarios:", error)
+        console.error("Error al obtener comentarios")
     }
 
     return data || []
 }
 
-export async function createComentario({ especieId, cuerpo }) {
+export async function createComentario({ especieId, cuerpo, campo }) {
     const { data: userData } = await supabase.auth.getUser()
     const authorId = userData?.user?.id
-    const response = await supabase.from("comentarios").insert([{ especie_id: especieId, author_id: authorId, cuerpo }])
+    const response = await supabase.from("comentarios").insert([{ especie_id: especieId, author_id: authorId, cuerpo, campo }])
 
     if (response.error) {
-        console.error("Error al crear comentario:", response.error)
+        console.error("Error al crear comentario")
     }
     return response
 }

@@ -29,9 +29,7 @@ export async function getRoles() {
 }
 
 export async function updateUsuario(id, nombre) {
-
     const { data, error } = await supabase.from("profiles").update({ full_name: nombre }).eq("id", id)
-
 
     return { data, error }
 }

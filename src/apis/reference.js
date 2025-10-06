@@ -18,6 +18,7 @@ export async function getReferencias() {
         .select("id, referencia, id_curador, created_at, profiles(full_name)")
         .order("created_at", { ascending: false })
     if (error) throw error
+
     return data.map((ref) => ({
         id: ref.id,
         referencia: ref.referencia,
