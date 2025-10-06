@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react"
+import PropTypes from "prop-types"
 import { Outlet, Link, useNavigate } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import { getUsuarioPorId } from "./apis/usuarios"
+import { supabase } from "./supabase/client"
 
-const DashboardLayout = () => {
+const DashboardLayout = ({ userRole }) => {
+    const location = useLocation()
     const [isSidebarVisible, setIsSidebarVisible] = useState(true)
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    // const [isDropdownOpen, setIsDropdownOpen] = useState(false)
     const [userName, setUserName] = useState("")
     async function fetchUser() {
         const { data } = await getUsuarioPorId()
@@ -20,18 +24,53 @@ const DashboardLayout = () => {
         setIsSidebarVisible(!isSidebarVisible)
     }
 
-    const toggleDropdown = () => {
-        setIsDropdownOpen(!isDropdownOpen)
-    }
+    // const toggleDropdown = () => {
+    //     setIsDropdownOpen(!isDropdownOpen)
+    // }
+DashboardLayout.propTypes = {
+    userRole: PropTypes.string,
+}
 
     const handleLogout = async () => {
         const { error } = await supabase.auth.signOut()
         if (error) {
             console.error("Error logging out:", error.message)
         } else {
-            window.location.href = "/login"
+            window.location.href = "/"
         }
     }
+
+    // Links por rol
+    const sidebarLinks = {
+        Administrador: [
+            { to: "/", label: "Dashboard" },
+            { to: "/Especies", label: "Espécimen en consulta" },
+            { to: "/curandores", label: "Espécimenes a cargo" },
+            { to: "/Correciones", label: "Correciones" },
+            { to: "/Exportacion", label: "Acciones" },
+            // { to: "/Nfts", label: "Nfts" },
+            { to: "/referencias", label: "Colección" },
+            { to: "/usuarios", label: "Usuarios" },
+            // { to: "/perfil", label: "Perfil" },
+        ],
+        Recolector: [
+            { to: "/", label: "Dashboard" },
+            // { to: "/Form", label: "Formulario" },
+            { to: "/Especies", label: "Espécimen en consulta" },
+            { to: "/perfil", label: "Perfil" },
+        ],
+        Curador: [
+            { to: "/", label: "Dashboard" },
+            // { to: "/Form", label: "Formulario" },
+            { to: "/Especies", label: "Espécimen en consulta" },
+            { to: "/Correciones", label: "Correciones" },
+            // { to: "/Nfts", label: "Nfts" },
+            { to: "/curandores", label: "Espécimenes a cargo" },
+            { to: "/perfil", label: "Perfil" },
+        ],
+    }
+
+    const linksToShow = sidebarLinks[userRole] || []
 
     return (
         <div className="flex h-screen w-screen">
@@ -58,82 +97,32 @@ const DashboardLayout = () => {
                             />
                             <span className="text-sm">{userName}</span>
                             <div className="flex space-x-4 mt-3">
-                                <a href="#!" className="text-white text-lg hover:text-orange-500">
+                                <a href="#" className="text-white text-lg hover:text-orange-500">
                                     <i className="zmdi zmdi-settings"></i>
-                                </a>
-                                <a href="#!" className="text-white text-lg hover:text-orange-500" onClick={handleLogout}>
-                                    <i className="zmdi zmdi-power"></i>
                                 </a>
                             </div>
                         </div>
                         <nav className="mt-6">
                             <ul className="space-y-2">
+                                {linksToShow.map((link) => (
+                                    <li key={link.to}>
+                                        <Link
+                                            to={link.to}
+                                            className={`block px-4 py-2 rounded transition font-semibold ${location.pathname === link.to ? 'bg-white bg-opacity-30 text-orange-500' : 'text-white hover:bg-white hover:bg-opacity-20'}`}
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    </li>
+                                ))}
                                 <li>
-                                    <Link
-                                        to="/"
-                                        className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
+                                    <button
+                                        onClick={handleLogout}
+                                        title="Cerrar sesión"
+                                        className="w-full flex items-center gap-2 px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition text-lg bg-transparent focus:outline-none"
                                     >
-                                        Dashboard
-                                    </Link>
-                                </li>
-
-                                <li>
-                                    <Link
-                                        to="/Especies"
-                                        className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
-                                    >
-                                        Espécimen en consulta
-                                    </Link>
-                                </li>
-
-                                <li>
-                                    <Link
-                                        to="/curandores"
-                                        className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
-                                    >
-                                        Espécimenes a cargo
-                                    </Link>
-                                </li>
-
-                                <li>
-                                    <Link
-                                        to="/Correciones"
-                                        className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
-                                    >
-                                        Correciones
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        to="/Exportacion"
-                                        className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
-                                    >
-                                        Acciones
-                                    </Link>
-                                </li>
-                                <li>
-                                    {/* <Link
-                                        to="/Nfts"
-                                        className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
-                                    >
-                                        Nfts
-                                    </Link> */}
-                                </li>
-                                <li>
-                                    <Link
-                                        to="/referencias"
-                                        className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
-                                    >
-                                        Colección
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        to="/usuarios"
-                                        className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
-                                    >
-                                        Usuarios
-                                    </Link>
+                                        <i className="zmdi zmdi-door-locked"></i>
+                                        <span>Cerrar sesión</span>
+                                    </button>
                                 </li>
                             </ul>
                         </nav>
