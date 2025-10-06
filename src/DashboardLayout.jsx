@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 import { Outlet, Link, useNavigate } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import { getUsuarioPorId } from "./apis/usuarios"
 import { supabase } from "./supabase/client"
 
 const DashboardLayout = ({ userRole }) => {
+    const location = useLocation()
     const [isSidebarVisible, setIsSidebarVisible] = useState(true)
     // const [isDropdownOpen, setIsDropdownOpen] = useState(false)
     const [userName, setUserName] = useState("")
@@ -98,13 +100,6 @@ DashboardLayout.propTypes = {
                                 <a href="#" className="text-white text-lg hover:text-orange-500">
                                     <i className="zmdi zmdi-settings"></i>
                                 </a>
-                                <button
-                                    onClick={handleLogout}
-                                    title="Cerrar sesión"
-                                    className="bg-transparent text-white text-lg hover:text-orange-500 focus:outline-none"
-                                >
-                                    <i className="zmdi zmdi-door-locked"> aqui esyo</i>
-                                </button>
                             </div>
                         </div>
                         <nav className="mt-6">
@@ -113,12 +108,22 @@ DashboardLayout.propTypes = {
                                     <li key={link.to}>
                                         <Link
                                             to={link.to}
-                                            className="block px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition"
+                                            className={`block px-4 py-2 rounded transition font-semibold ${location.pathname === link.to ? 'bg-white bg-opacity-30 text-orange-500' : 'text-white hover:bg-white hover:bg-opacity-20'}`}
                                         >
                                             {link.label}
                                         </Link>
                                     </li>
                                 ))}
+                                <li>
+                                    <button
+                                        onClick={handleLogout}
+                                        title="Cerrar sesión"
+                                        className="w-full flex items-center gap-2 px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition text-lg bg-transparent focus:outline-none"
+                                    >
+                                        <i className="zmdi zmdi-door-locked"></i>
+                                        <span>Cerrar sesión</span>
+                                    </button>
+                                </li>
                             </ul>
                         </nav>
                     </div>
