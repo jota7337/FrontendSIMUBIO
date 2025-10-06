@@ -73,31 +73,27 @@ DashboardLayout.propTypes = {
     const linksToShow = sidebarLinks[userRole] || []
 
     return (
-        <div className="flex h-screen w-screen">
+        <div className="flex h-screen w-screen ub-container">
             {isSidebarVisible && (
-                <aside
-                    className="relative w-64 h-full text-white border-r border-white/40 
-          before:absolute before:inset-0 before:bg-[url('../assets/img/sideBar-font.jpg')] 
-          before:bg-cover before:bg-center before:brightness-50 before:content-['']"
-                >
+                <aside className="ub-sidebar relative w-64 h-full border-r border-green-600">
                     <div className="relative h-full flex flex-col p-4 z-10">
                         <button
                             onClick={toggleSidebar}
-                            className="mb-4 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 self-end"
+                            className="mb-4 ub-button-secondary p-2 rounded-full shadow-md self-end"
                         >
                             ←
                         </button>
-                        <div className="text-xl font-bold text-center mb-6">UNIVERSIDAD EL BOSQUE</div>
-                        <div className="flex flex-col items-center border-t border-b border-white border-opacity-30 py-4">
+                        <div className="text-xl font-bold text-center mb-6 text-yellow-400">UNIVERSIDAD EL BOSQUE</div>
+                        <div className="flex flex-col items-center border-t border-b border-green-600 py-4">
                             <img
                                 src="./assets/img/avatar.jpg"
                                 alt="User Icon"
-                                className="w-20 h-20 rounded-full mb-2 cursor-pointer"
+                                className="w-20 h-20 rounded-full mb-2 cursor-pointer border-2 border-yellow-400"
                                 onClick={() => navigate("/perfil")}
                             />
-                            <span className="text-sm">{userName}</span>
+                            <span className="text-sm text-yellow-200">{userName}</span>
                             <div className="flex space-x-4 mt-3">
-                                <a href="#" className="text-white text-lg hover:text-orange-500">
+                                <a href="#" className="text-yellow-400 text-lg hover:text-yellow-300">
                                     <i className="zmdi zmdi-settings"></i>
                                 </a>
                             </div>
@@ -108,7 +104,11 @@ DashboardLayout.propTypes = {
                                     <li key={link.to}>
                                         <Link
                                             to={link.to}
-                                            className={`block px-4 py-2 rounded transition font-semibold ${location.pathname === link.to ? 'bg-white bg-opacity-30 text-orange-500' : 'text-white hover:bg-white hover:bg-opacity-20'}`}
+                                            className={`block px-4 py-2 rounded-lg transition font-semibold ${
+                                                location.pathname === link.to 
+                                                    ? 'ub-nav-item-active' 
+                                                    : 'ub-nav-item text-white'
+                                            }`}
                                         >
                                             {link.label}
                                         </Link>
@@ -118,7 +118,7 @@ DashboardLayout.propTypes = {
                                     <button
                                         onClick={handleLogout}
                                         title="Cerrar sesión"
-                                        className="w-full flex items-center gap-2 px-4 py-2 rounded text-white hover:bg-white hover:bg-opacity-20 transition text-lg bg-transparent focus:outline-none"
+                                        className="w-full flex items-center gap-2 px-4 py-2 rounded-lg text-white hover:bg-red-700 transition text-lg bg-transparent focus:outline-none"
                                     >
                                         <i className="zmdi zmdi-door-locked"></i>
                                         <span>Cerrar sesión</span>
@@ -129,11 +129,11 @@ DashboardLayout.propTypes = {
                     </div>
                 </aside>
             )}
-            <main className="flex-1 p-6 overflow-y-auto h-full">
+            <main className="flex-1 p-6 overflow-y-auto h-full bg-gradient-to-br from-green-50 to-yellow-50">
                 {!isSidebarVisible && (
                     <button
                         onClick={toggleSidebar}
-                        className="mb-4 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700"
+                        className="mb-4 ub-button-primary p-2 rounded-full shadow-md"
                     >
                         →
                     </button>
