@@ -2,9 +2,14 @@ import * as XLSX from "xlsx"
 import { saveAs } from "file-saver"
 import { supabase } from "../supabase/client"
 
-export async function exportEspeciesWithTemplate(startDate, endDate) {
-    // 1. Query a Supabase
-    let query = supabase.from("especies").select("*")
+export async function exportEspeciesWithTemplate(id, startDate, endDate) {
+    console.log("dlaskjflkñad")
+    console.log("exportEspeciesWithTemplate llamado con:", { id, startDate, endDate })
+
+    let query = supabase.from("especies").select("*").eq("reference_by", id).eq("estado", 1)
+    if (startDate && endDate) {
+        query = query.gte("created_at", startDate).lte("created_at", endDate)
+    }
 
     const { data, error } = await query
 

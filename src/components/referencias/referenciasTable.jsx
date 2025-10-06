@@ -40,15 +40,15 @@ const ReferenciasTable = () => {
     return (
         <div className="p-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Referencias</h2>
+                <h2 className="text-xl font-bold">Colecciónes</h2>
                 <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleCreate}>
-                    Crear Referencia
+                    Crear colección
                 </button>
             </div>
             <table className="min-w-full bg-white border">
                 <thead>
                     <tr>
-                        <th className="border px-4 py-2">Referencia</th>
+                        <th className="border px-4 py-2">Colección</th>
                         <th className="border px-4 py-2">Curador/Admin</th>
                         <th className="border px-4 py-2">Acciones</th>
                     </tr>

@@ -4,26 +4,8 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { createEspecie, updateEspecie, deleteEspecie } from "../apis/Especie"
 import { createComentario } from "../apis/Comentarios"
 import EspeciesForm from "../components/especies/form/especiesForm"
-import {
-    DatosSchema,
-    EventoSchema,
-    FamilySchema,
-    OtherSchema,
-    RegistreSchema,
-    TaxonRankSchema,
-    TaxonSchema,
-} from "../lib/validations"
-import {
-    camposDatos,
-    camposEvento,
-    camposFamilia,
-    camposOtros,
-    camposRegsitre,
-    camposTaxon,
-    camposTaxonRank,
-} from "../lib/fields"
-
-import { cargarReferencias } from "../lib/fields"
+import { DatosSchema, EventoSchema, FamilySchema, OtherSchema, RegistreSchema, TaxonSchema } from "../lib/validations"
+import { camposDatos, camposEvento, camposFamilia, camposOtros, camposRegsitre, camposTaxon } from "../lib/fields"
 
 const Form = () => {
     const navigate = useNavigate()
@@ -32,17 +14,27 @@ const Form = () => {
     const [formData, setFormData] = useState({})
     const [editingId, setEditingId] = useState(null)
     const [comentario, setComentario] = useState("")
+    const [campoComentario, setCampoComentario] = useState("")
     const [showComentarioModal, setShowComentarioModal] = useState(false)
     // Detectar modo curador
     const isCuradorMode = location.state?.mode === "curador"
+
+    // Obtener campos según sección activa
+    const camposPorSeccion = {
+        1: camposRegsitre,
+        2: camposTaxon,
+        3: camposEvento,
+        4: camposOtros,
+        5: camposFamilia,
+        6: camposDatos,
+    }
+    const camposActuales = camposPorSeccion[activeForm] || []
 
     useEffect(() => {
         if (location.state && location.state.species) {
             setFormData(location.state.species)
             setEditingId(location.state.species.id || null)
         }
-
-        cargarReferencias()
     }, [location.state])
 
     const handleButtonClick = (formIndex) => {
@@ -70,16 +62,17 @@ const Form = () => {
 
     // Función para enviar comentario a Supabase
     const handleEnviarComentario = async () => {
-        if (!editingId || !comentario.trim()) {
-            alert("Debes escribir un comentario")
+        if (!editingId || !comentario.trim() || !campoComentario) {
+            alert("Debes escribir un comentario y seleccionar el campo")
             return
         }
         try {
-            const { data, error } = await createComentario({ especieId: editingId, cuerpo: comentario })
+            const { data, error } = await createComentario({ especieId: editingId, cuerpo: comentario, campo: campoComentario })
             if (error) alert("Error al crear comentario")
             else {
                 alert("Comentario enviado")
                 setComentario("")
+                setCampoComentario("")
                 setShowComentarioModal(false)
             }
         } catch (error) {
@@ -133,25 +126,25 @@ const Form = () => {
                     onClick={() => handleButtonClick(1)}
                     className={`px-4 py-2 rounded ${activeForm === 1 ? "bg-green-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"}`}
                 >
-                    Informacion del evento
+                    Información del evento
                 </button>
                 <button
                     onClick={() => handleButtonClick(2)}
                     className={`px-4 py-2 rounded ${activeForm === 2 ? "bg-green-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"}`}
                 >
-                    Taxonomia
+                    Taxonomía
                 </button>
                 <button
                     onClick={() => handleButtonClick(3)}
                     className={`px-4 py-2 rounded ${activeForm === 3 ? "bg-green-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"}`}
                 >
-                    Informacion de la especie
+                    Información del espécimen
                 </button>
                 <button
                     onClick={() => handleButtonClick(4)}
                     className={`px-4 py-2 rounded ${activeForm === 4 ? "bg-green-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"}`}
                 >
-                    Ubicacion coordenadas
+                    Georreferenciación
                 </button>
                 <button
                     onClick={() => handleButtonClick(5)}
@@ -163,13 +156,7 @@ const Form = () => {
                     onClick={() => handleButtonClick(6)}
                     className={`px-4 py-2 rounded ${activeForm === 6 ? "bg-green-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"}`}
                 >
-                    Informacion institucion
-                </button>
-                <button
-                    onClick={() => handleButtonClick(7)}
-                    className={`px-4 py-2 rounded ${activeForm === 7 ? "bg-green-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"}`}
-                >
-                    Taxon Rank
+                    Información del registro
                 </button>
             </div>
 
@@ -223,14 +210,6 @@ const Form = () => {
                         fields={camposDatos}
                     />
                 )}
-                {activeForm === 7 && (
-                    <EspeciesForm
-                        initialData={formData}
-                        onChange={handleSectionChange}
-                        zodSchema={TaxonRankSchema}
-                        fields={camposTaxonRank}
-                    />
-                )}
             </div>
 
             <div className="flex space-x-2 mt-4">
@@ -268,6 +247,19 @@ const Form = () => {
                             &times;
                         </button>
                         <h2 className="text-lg font-bold mb-4 text-center">Deja un comentario como curador</h2>
+                        <label className="block mb-2 font-medium">Selecciona el campo:</label>
+                        <select
+                            className="w-full p-2 border rounded mb-4"
+                            value={campoComentario}
+                            onChange={(e) => setCampoComentario(e.target.value)}
+                        >
+                            <option value="">-- Selecciona campo --</option>
+                            {camposActuales.map((campo, idx) => (
+                                <option key={idx} value={campo.name || campo.label || campo}>
+                                    {campo.label || campo.name || campo}
+                                </option>
+                            ))}
+                        </select>
                         <textarea
                             className="w-full p-2 border rounded mb-4"
                             rows={4}

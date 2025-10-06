@@ -20,7 +20,8 @@ const ComentariosDialog = ({ isOpen, onClose, species, comentarios, onHecho }) =
                         comentarios.map((c) => (
                             <div key={c.id} className="mb-4 p-3 border rounded bg-gray-50">
                                 <div className="text-sm text-gray-800 mb-1">{c.cuerpo}</div>
-                                <div className="text-xs text-gray-500">{new Date(c.created_at).toLocaleString()}</div>
+
+                                <div className="text-xs text-gray-500">campo : {c.campo || "general"}</div>
                                 <div className="text-xs text-gray-600">{c.perfiles?.full_name || c.author_id}</div>
                                 <div className="mt-1 flex items-center gap-2">
                                     {c.aprobado ? (

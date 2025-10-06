@@ -1,4 +1,14 @@
 import { supabase } from "../supabase/client"
+// Modificar el estado de la especie
+export async function updateEstadoEspecie(especieId, estadoId) {
+    // Asume que el campo en la tabla es 'estado_especie' y se actualiza con el id del estado
+    const response = await supabase.from("especies").update({ estado: estadoId }).eq("id", especieId)
+
+    if (response.error) {
+        console.error("Error al actualizar estado de especie:", response.error)
+    }
+    return response
+}
 
 export async function createEspecie(data, userId) {
     const dataWithUser = { ...data, created_by: userId }

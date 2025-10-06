@@ -48,7 +48,7 @@ const ReferenciaDialog = ({ open, onClose, referencia }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded shadow-lg min-w-[350px]">
-                <h3 className="text-lg font-bold mb-4">{referencia ? "Editar" : "Crear"} Referencia</h3>
+                <h3 className="text-lg font-bold mb-4">{referencia ? "Editar" : "Crear"} Colección</h3>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="block mb-1">Curador/Admin</label>
@@ -62,13 +62,13 @@ const ReferenciaDialog = ({ open, onClose, referencia }) => {
                             <option value="">Seleccione...</option>
                             {curadores.map((c) => (
                                 <option key={c.id} value={c.id}>
-                                    {c.full_name} ({c.rol})
+                                    {c.full_name}
                                 </option>
                             ))}
                         </select>
                     </div>
                     <div className="mb-4">
-                        <label className="block mb-1">Referencia</label>
+                        <label className="block mb-1">Colección</label>
                         <textarea
                             name="referencia"
                             value={form.referencia}

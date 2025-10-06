@@ -9,7 +9,6 @@ export async function getCuradores() {
 export async function assignCatalogNumber(especieId, catalogNumber) {
     const { data, error } = await supabase.from("especies").update({ catalogNumber }).eq("id", especieId).select()
 
-
     if (error) {
         console.error("Error al asignar catalogNumber:", error)
         return null
