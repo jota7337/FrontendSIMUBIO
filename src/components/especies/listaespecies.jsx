@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import SpeciesDetailsDialog from "./especiedialog"
 import ComentariosDialog from "./comentariosdialog"
-import { getEspecies, deleteEspecie } from "../../apis/Especie"
+import { getEspecies, deleteEspecie, getEspecieByUser } from "../../apis/Especie"
 import { getComentariosByEspecie, updateComentario } from "../../apis/Comentarios"
 import { useEffect, useState } from "react"
 
@@ -39,7 +39,7 @@ const ListEspecies = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true)
-            const { data: especies, error } = await getEspecies()
+            const { data: especies, error } = await getEspecieByUser()
             if (!error && Array.isArray(especies)) {
                 setData(especies)
 

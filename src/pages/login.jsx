@@ -11,7 +11,6 @@ function Login() {
         e.preventDefault()
         try {
             const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-            console.log(data, error)
             if (error) {
                 alert("Credenciales incorrectas")
                 return

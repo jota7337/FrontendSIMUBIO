@@ -91,3 +91,19 @@ export async function createEspeciesBatch(rows, userId) {
     }
     return { data, count: count ?? payload.length }
 }
+
+export async function getEspecieByUser() {
+             const { data: userData, error: userError } = await supabase.auth.getUser()
+        if (userError || !userData?.user?.id) {
+            alert("No se pudo obtener el usuario actual")
+            return
+        }
+        const userId = userData.user.id
+    const response = await supabase.from("especies").select("*").eq("created_by", userId)
+
+    if (response.error) {
+        console.error("Error al eliminar especie:", response.error)
+    }
+
+    return response
+}
