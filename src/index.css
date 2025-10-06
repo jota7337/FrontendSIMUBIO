@@ -1,3 +1,124 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Universidad El Bosque - Paleta de Colores Corporativos */
+:root {
+  /* Colores Principales */
+  --ub-green-primary: #1b5e20;      /* Verde institucional oscuro */
+  --ub-green-secondary: #2e7d32;    /* Verde medio */
+  --ub-green-light: #4caf50;        /* Verde claro */
+  --ub-green-soft: #81c784;         /* Verde suave */
+  --ub-yellow-primary: #f57f17;     /* Amarillo institucional */
+  --ub-yellow-secondary: #fbc02d;   /* Amarillo medio */
+  --ub-yellow-light: #ffeb3b;       /* Amarillo claro */
+  --ub-yellow-soft: #fff59d;        /* Amarillo suave */
+  
+  /* Colores de estado */
+  --ub-success: #43a047;
+  --ub-warning: #ff8f00;
+  --ub-error: #d32f2f;
+  --ub-info: #1976d2;
+  
+  /* Neutros */
+  --ub-gray-dark: #37474f;
+  --ub-gray-medium: #546e7a;
+  --ub-gray-light: #eceff1;
+  --ub-white: #ffffff;
+  --ub-black: #1c1c1c;
+}
+
+/* Clases Utilitarias Corporativas */
+.ub-container {
+  @apply bg-gradient-to-br from-green-100 via-yellow-50 to-green-50;
+}
+
+.ub-card {
+  @apply bg-white rounded-xl shadow-lg border border-green-200;
+}
+
+.ub-card-header {
+  @apply bg-gradient-to-r from-green-700 to-green-600 text-white p-6 rounded-t-xl;
+}
+
+.ub-button-primary {
+  @apply bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md;
+}
+
+.ub-button-secondary {
+  @apply bg-yellow-500 hover:bg-yellow-600 text-green-900 font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md;
+}
+
+.ub-button-outline {
+  @apply border-2 border-green-700 text-green-700 hover:bg-green-700 hover:text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200;
+}
+
+.ub-input {
+  @apply border-2 border-green-300 focus:border-green-600 focus:ring-2 focus:ring-green-200 rounded-lg px-3 py-2 transition-all duration-200;
+}
+
+.ub-table-header {
+  @apply bg-green-700 text-white font-semibold;
+}
+
+.ub-table-row {
+  @apply border-b border-green-100 hover:bg-green-50 transition-colors duration-150;
+}
+
+.ub-badge-success {
+  @apply bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium;
+}
+
+.ub-badge-warning {
+  @apply bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm font-medium;
+}
+
+.ub-badge-info {
+  @apply bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-medium;
+}
+
+.ub-sidebar {
+  @apply bg-gradient-to-b from-green-800 to-green-900 text-white;
+}
+
+.ub-nav-item {
+  @apply hover:bg-green-700 rounded-lg transition-colors duration-200 p-3 cursor-pointer;
+}
+
+.ub-nav-item-active {
+  @apply bg-yellow-500 text-green-900 rounded-lg p-3 font-semibold;
+}
+
+/* Tipografía Corporativa */
+.ub-title {
+  @apply text-3xl font-bold text-green-800 tracking-tight;
+}
+
+.ub-subtitle {
+  @apply text-xl font-semibold text-green-700;
+}
+
+.ub-text-primary {
+  @apply text-green-800;
+}
+
+.ub-text-secondary {
+  @apply text-green-600;
+}
+
+.ub-text-muted {
+  @apply text-gray-600;
+}
+
+/* Estados de componentes */
+.ub-loading {
+  @apply animate-pulse bg-green-100;
+}
+
+.ub-error {
+  @apply bg-red-50 border border-red-200 text-red-800 p-3 rounded-lg;
+}
+
+.ub-success {
+  @apply bg-green-50 border border-green-200 text-green-800 p-3 rounded-lg;
+}

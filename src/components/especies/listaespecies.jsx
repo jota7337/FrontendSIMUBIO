@@ -127,159 +127,163 @@ const ListEspecies = () => {
     }
 
     return (
-        <div className="w-full p-4">
-            <h2 className="text-2xl font-bold mb-4">Registros de Especies</h2>
-            {/* Filtros iniciales */}
-            <div className="mb-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
-                <input
-                    type="text"
-                    placeholder="Filtrar catálogo..."
-                    value={filterCatalog}
-                    onChange={handleFilterCatalog}
-                    className="border p-2 rounded"
-                />
-                <input
-                    type="text"
-                    placeholder="Filtrar municipio..."
-                    value={filterMunicipio}
-                    onChange={handleFilterMunicipio}
-                    className="border p-2 rounded"
-                />
-                <input
-                    type="text"
-                    placeholder="Filtrar referencia..."
-                    value={filterReferencia}
-                    onChange={handleFilterReferencia}
-                    className="border p-2 rounded"
-                />
-                <input
-                    type="text"
-                    placeholder="Filtrar orden..."
-                    value={filterOrden}
-                    onChange={handleFilterOrden}
-                    className="border p-2 rounded"
-                />
-                <input
-                    type="text"
-                    placeholder="Filtrar familia..."
-                    value={filterFamilia}
-                    onChange={handleFilterFamilia}
-                    className="border p-2 rounded"
-                />
-                <input
-                    type="text"
-                    placeholder="Buscar por nombre científico..."
-                    value={search}
-                    onChange={handleSearch}
-                    className="border p-2 rounded"
-                />
-            </div>
-            <div className="mb-4 flex justify-end">
-                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={handleAddClick}>
-                    Agregar Registro
-                </button>
-            </div>
-            <table className="w-full bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden">
-                <thead className="bg-gray-100 border-b">
-                    <tr>
-                        <th className="text-left p-3">Catálogo</th>
-                        <th className="text-left p-3">Nombre científico</th>
-                        <th className="text-left p-3">Lugar</th>
-                        <th className="text-left p-3">Orden</th>
-                        <th className="text-left p-3">Familia</th>
-                        <th className="text-left p-3">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {loading ? (
-                        <tr>
-                            <td colSpan="6" className="text-center p-4 text-gray-500">
-                                Cargando...
-                            </td>
-                        </tr>
-                    ) : filteredData.length > 0 ? (
-                        paginatedData.map((item, index) => (
-                            <tr key={item.id || index} className="border-b hover:bg-gray-50">
-                                <td className="p-3">{item.catalogNumber}</td>
-                                <td className="p-3">{item.scientificName || item.nombre}</td>
-                                <td className="p-3">{item.country || item.pais || item.lugar}</td>
-                                <td className="p-3">{item.order || item.orden}</td>
-                                <td className="p-3">{item.family || item.familia}</td>
-                                <td className="p-3 flex gap-2 items-center">
-                                    <span
-                                        title="Ver Detalles"
-                                        className="cursor-pointer text-blue-500 text-xl hover:text-blue-700"
-                                        onClick={(e) => handleViewDetailsClick(e, item)}
-                                    >
-                                        🛈
-                                    </span>
-                                    <span
-                                        title="Editar"
-                                        className="cursor-pointer text-green-500 text-xl hover:text-green-700"
-                                        onClick={(e) => handleEditClick(e, item)}
-                                    >
-                                        ✏️
-                                    </span>
-                                    <span
-                                        title="Eliminar"
-                                        className="cursor-pointer text-red-500 text-xl hover:text-red-700"
-                                        onClick={(e) => handleDeleteClick(e, item)}
-                                    >
-                                        🗑️
-                                    </span>
-                                    <span
-                                        title="Comentarios de la especie"
-                                        className="cursor-pointer text-yellow-600 text-xl flex items-center gap-1"
-                                        onClick={(e) => handleComentariosClick(e, item)}
-                                    >
-                                        💬
-                                        <span className="text-xs font-bold bg-gray-200 rounded px-2 py-1">
-                                            {comentariosCount[item.id] || 0}
-                                        </span>
-                                    </span>
-                                    {/* Diálogo de comentarios como componente */}
-                                    <ComentariosDialog
-                                        isOpen={comentariosDialogOpen}
-                                        onClose={() => setComentariosDialogOpen(false)}
-                                        species={comentariosDialogSpecies}
-                                        comentarios={comentariosDialogList}
-                                        onHecho={handleComentarioHecho}
-                                    />
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="6" className="text-center p-4 text-gray-500">
-                                No se encontraron resultados
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-            {/* Controles de paginación */}
-            {totalPages > 1 && (
-                <div className="flex justify-center items-center mt-4 gap-2">
-                    <button
-                        className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        Anterior
-                    </button>
-                    <span className="mx-2">
-                        Página {currentPage} de {totalPages}
-                    </span>
-                    <button
-                        className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                    >
-                        Siguiente
+        <div className="w-full p-6 ub-container min-h-screen">
+            <div className="ub-card p-6">
+                <h2 className="ub-title mb-6 text-center">Registros de Especies</h2>
+                {/* Filtros iniciales */}
+                <div className="mb-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <input
+                        type="text"
+                        placeholder="Filtrar catálogo..."
+                        value={filterCatalog}
+                        onChange={handleFilterCatalog}
+                        className="ub-input"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Filtrar municipio..."
+                        value={filterMunicipio}
+                        onChange={handleFilterMunicipio}
+                        className="ub-input"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Filtrar referencia..."
+                        value={filterReferencia}
+                        onChange={handleFilterReferencia}
+                        className="ub-input"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Filtrar orden..."
+                        value={filterOrden}
+                        onChange={handleFilterOrden}
+                        className="ub-input"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Filtrar familia..."
+                        value={filterFamilia}
+                        onChange={handleFilterFamilia}
+                        className="ub-input"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre científico..."
+                        value={search}
+                        onChange={handleSearch}
+                        className="ub-input"
+                    />
+                </div>
+                <div className="mb-4 flex justify-end">
+                    <button className="ub-button-primary" onClick={handleAddClick}>
+                        Agregar Registro
                     </button>
                 </div>
-            )}
-            <SpeciesDetailsDialog isOpen={isDialogOpen} onClose={handleCloseDialog} species={selectedSpecies} />
+                <div className="ub-card overflow-hidden">
+                    <table className="w-full">
+                        <thead className="ub-table-header">
+                            <tr>
+                                <th className="text-left p-3 font-semibold">Catálogo</th>
+                                <th className="text-left p-3 font-semibold">Nombre científico</th>
+                                <th className="text-left p-3 font-semibold">Lugar</th>
+                                <th className="text-left p-3 font-semibold">Orden</th>
+                                <th className="text-left p-3 font-semibold">Familia</th>
+                                <th className="text-left p-3 font-semibold">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="6" className="text-center p-4 ub-text-muted">
+                                        Cargando...
+                                    </td>
+                                </tr>
+                            ) : filteredData.length > 0 ? (
+                                paginatedData.map((item, index) => (
+                                    <tr key={item.id || index} className="ub-table-row">
+                                        <td className="p-3 ub-text-primary">{item.catalogNumber}</td>
+                                        <td className="p-3 ub-text-primary font-medium">{item.scientificName || item.nombre}</td>
+                                        <td className="p-3 ub-text-secondary">{item.country || item.pais || item.lugar}</td>
+                                        <td className="p-3 ub-text-secondary">{item.order || item.orden}</td>
+                                        <td className="p-3 ub-text-secondary">{item.family || item.familia}</td>
+                                        <td className="p-3 flex gap-2 items-center">
+                                            <span
+                                                title="Ver Detalles"
+                                                className="cursor-pointer text-green-600 text-xl hover:text-green-800"
+                                                onClick={(e) => handleViewDetailsClick(e, item)}
+                                            >
+                                                🛈
+                                            </span>
+                                            <span
+                                                title="Editar"
+                                                className="cursor-pointer text-yellow-600 text-xl hover:text-yellow-800"
+                                                onClick={(e) => handleEditClick(e, item)}
+                                            >
+                                                ✏️
+                                            </span>
+                                            <span
+                                                title="Eliminar"
+                                                className="cursor-pointer text-red-500 text-xl hover:text-red-700"
+                                                onClick={(e) => handleDeleteClick(e, item)}
+                                            >
+                                                🗑️
+                                            </span>
+                                            <span
+                                                title="Comentarios de la especie"
+                                                className="cursor-pointer text-green-700 text-xl flex items-center gap-1"
+                                                onClick={(e) => handleComentariosClick(e, item)}
+                                            >
+                                                💬
+                                                <span className="ub-badge-info">
+                                                    {comentariosCount[item.id] || 0}
+                                                </span>
+                                            </span>
+                                            {/* Diálogo de comentarios como componente */}
+                                            <ComentariosDialog
+                                                isOpen={comentariosDialogOpen}
+                                                onClose={() => setComentariosDialogOpen(false)}
+                                                species={comentariosDialogSpecies}
+                                                comentarios={comentariosDialogList}
+                                                onHecho={handleComentarioHecho}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="6" className="text-center p-4 ub-text-muted">
+                                        No se encontraron resultados
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+                {/* Controles de paginación */}
+                {totalPages > 1 && (
+                    <div className="flex justify-center items-center mt-6 gap-3">
+                        <button
+                            className="ub-button-outline"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            Anterior
+                        </button>
+                        <span className="mx-2 ub-text-primary font-medium">
+                            Página {currentPage} de {totalPages}
+                        </span>
+                        <button
+                            className="ub-button-outline"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            Siguiente
+                        </button>
+                    </div>
+                )}
+                <SpeciesDetailsDialog isOpen={isDialogOpen} onClose={handleCloseDialog} species={selectedSpecies} />
+            </div>
         </div>
     )
 }
