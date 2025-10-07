@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { BarChart, Bar, PieChart, Pie, Tooltip, XAxis, YAxis, CartesianGrid, Legend } from "recharts"
 import { getReferences } from "../apis/reference"
-import { getEspecieByReference } from "../apis/Especie"
+import {  getEspecieByReferenceUser } from "../apis/Especie"
 import logo from "../../public/universidad.png"
 
 export default function Dashboard() {
@@ -14,11 +14,11 @@ export default function Dashboard() {
             const references = await getReferences()
             const stats = []
             for (const ref of references) {
-                const especies = await getEspecieByReference(ref.id)
+                const especies = await getEspecieByReferenceUser(ref.id)
                 stats.push({
                     referencia: ref.referencia,
                     cantidad: especies.length,
-                    aprobadas: especies.filter((e) => e.estado === "aprobada").length,
+                    aprobadas: especies.filter((e) => e.estado === 1).length,
                 })
             }
             setReferenceStats(stats)
@@ -100,7 +100,7 @@ export default function Dashboard() {
                         <div className="flex flex-col gap-8 items-center justify-center">
                             <div className="bg-white rounded-xl border border-yellow-200 shadow p-4">
                                 <h2 className="text-lg font-bold text-yellow-700 mb-2 text-center">
-                                    Registro de Especies por Referencia
+                                    Registro de Especies por colección
                                 </h2>
                                 <BarChart width={350} height={220} data={dataBar}>
                                     <CartesianGrid strokeDasharray="3 3" />

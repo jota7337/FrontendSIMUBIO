@@ -107,3 +107,29 @@ export async function getEspecieByUser() {
 
     return response
 }
+
+export async function getEspecieByReferenceUser(reference_id) {
+    const { data: userData, error: userError } = await supabase.auth.getUser()
+    if (userError || !userData?.user?.id) {
+        alert("No se pudo obtener el usuario actual")
+        return
+    }
+    const userId = userData.user.id
+    const response = await supabase
+        .from("especies")
+        .select(
+            `
+      *,
+      estado_especie (
+        id,
+        code,
+        name
+       
+      )
+    `
+        )
+        .eq("reference_by", reference_id)
+        .eq("created_by", userId)
+
+    return response.data
+}

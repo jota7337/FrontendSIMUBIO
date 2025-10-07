@@ -3,8 +3,7 @@ import { saveAs } from "file-saver"
 import { supabase } from "../supabase/client"
 
 export async function exportEspeciesWithTemplate(id, startDate, endDate) {
-    console.log("dlaskjflkñad")
-    console.log("exportEspeciesWithTemplate llamado con:", { id, startDate, endDate })
+
 
     let query = supabase.from("especies").select("*").eq("reference_by", id).eq("estado", 1)
     if (startDate && endDate) {

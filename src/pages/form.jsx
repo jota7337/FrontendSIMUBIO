@@ -5,10 +5,12 @@ import { createEspecie, updateEspecie, deleteEspecie } from "../apis/Especie"
 import { createComentario } from "../apis/Comentarios"
 import EspeciesForm from "../components/especies/form/especiesForm"
 import { DatosSchema, EventoSchema, FamilySchema, OtherSchema, RegistreSchema, TaxonSchema } from "../lib/validations"
+import { useNotifications } from "../context/NotificationsContext"
 import { camposDatos, camposEvento, camposFamilia, camposOtros, camposRegsitre, camposTaxon } from "../lib/fields"
 
 const Form = () => {
     const navigate = useNavigate()
+    const notifications = useNotifications()
     const [activeForm, setActiveForm] = useState(null)
     const location = useLocation()
     const [formData, setFormData] = useState({})
@@ -48,57 +50,57 @@ const Form = () => {
     const handleCreate = async () => {
         const { data: userData, error: userError } = await supabase.auth.getUser()
         if (userError || !userData?.user?.id) {
-            alert("No se pudo obtener el usuario actual")
+            notifications.error("No se pudo obtener el usuario actual")
             return
         }
         const userId = userData.user.id
         const { data, error } = await createEspecie(formData, userId)
-        if (error) alert("Error al crear especie")
+        if (error) notifications.error("Error al crear especie")
         else {
-            alert("Especie creada")
-            navigate("/especies")
+            notifications.success("Especie creada correctamente", { title: 'Registro creado' })
+            navigate("/Especies")
         }
     }
 
     // Función para enviar comentario a Supabase
     const handleEnviarComentario = async () => {
         if (!editingId || !comentario.trim() || !campoComentario) {
-            alert("Debes escribir un comentario y seleccionar el campo")
+            notifications.warning("Debes escribir un comentario y seleccionar el campo")
             return
         }
         try {
             const { data, error } = await createComentario({ especieId: editingId, cuerpo: comentario, campo: campoComentario })
-            if (error) alert("Error al crear comentario")
+            if (error) notifications.error("Error al crear comentario")
             else {
-                alert("Comentario enviado")
+                notifications.success("Comentario enviado", { title: 'Comentario' })
                 setComentario("")
                 setCampoComentario("")
                 setShowComentarioModal(false)
             }
         } catch (error) {
-            alert("Error al enviar comentario")
+            notifications.error("Error al enviar comentario")
             console.error(error)
         }
     }
 
     const handleUpdate = async () => {
-        if (!editingId) return alert("No hay especie para actualizar")
+    if (!editingId) return notifications.warning("No hay especie para actualizar")
 
         const { data, error } = await updateEspecie(editingId, formData)
 
-        if (error) alert("Error al actualizar especie")
+        if (error) notifications.error("Error al actualizar especie")
         else {
-            alert("Especie actualizada")
-            navigate("/especies")
+            notifications.success("Especie actualizada", { title: 'Actualización' })
+            navigate("/Especies")
         }
     }
 
     const handleDelete = async () => {
-        if (!editingId) return alert("No hay especie para eliminar")
+    if (!editingId) return notifications.warning("No hay especie para eliminar")
 
         const { data, error } = await deleteEspecie(editingId)
-        if (error) alert("Error al eliminar especie")
-        else alert("Especie eliminada")
+        if (error) notifications.error("Error al eliminar especie")
+        else notifications.success("Especie eliminada", { title: 'Eliminada' })
     }
 
     const handleGoToDashboard = () => {

@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
 import PropTypes from "prop-types"
 import { getReferences } from "../../../apis/reference"
+import { useNotifications } from "../../../context/NotificationsContext"
 
 function EspeciesForm({ initialData = {}, onChange, fields = [], zodSchema }) {
     // Normalizar initialData: null -> ""
@@ -51,10 +52,10 @@ function EspeciesForm({ initialData = {}, onChange, fields = [], zodSchema }) {
         }
     }
 
+    const notifications = useNotifications()
     const showHelp = (help, label) => {
         const message = help || `Información: ${label}`
-        // Simple alert for now; can be replaced with a tooltip/modal later
-        alert(message)
+        notifications.info(message, { title: 'Ayuda de campo' })
     }
 
     return (

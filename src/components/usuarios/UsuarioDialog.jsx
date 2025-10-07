@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import PropTypes from "prop-types"
 import { createUsuario, updateUsuarioAdmin as updateUsuario } from "../../apis/admin-users"
+import Alert from "../ui/Alert"
 
 const UsuarioDialog = ({ open, onClose, onSaved, initialData }) => {
     const [form, setForm] = useState({
@@ -55,6 +56,11 @@ const UsuarioDialog = ({ open, onClose, onSaved, initialData }) => {
         setLoading(true)
 
         try {
+            // Validación de dominio (solo en creación o si decide cambiar correo en edición)
+            const domainRegex = /^[^@\s]+@unbosque\.edu\.co$/i
+            if (!domainRegex.test(form.email)) {
+                throw new Error("El correo debe terminar en @unbosque.edu.co")
+            }
             if (initialData) {
                 // Edit mode: call updateUsuario
                 await updateUsuario(initialData.id, {
@@ -89,7 +95,11 @@ const UsuarioDialog = ({ open, onClose, onSaved, initialData }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
                 <h3 className="text-xl font-bold mb-4">{initialData ? "Editar Usuario" : "Crear Usuario"}</h3>
-                {error && <div className="mb-3 text-red-600">{error}</div>}
+                {error && (
+                    <Alert variant="error" title="Error" className="mb-4">
+                        {error}
+                    </Alert>
+                )}
                 <form onSubmit={handleSubmit} className="space-y-3">
                     <div>
                         <label className="block text-sm font-medium">Nombre</label>
