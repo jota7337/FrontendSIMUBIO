@@ -18,6 +18,7 @@ import ReferenciasPage from "./pages/referencias"
 import PerfilUsuario from "./pages/PerfilUsuario"
 import { useState } from "react"
 import { getUsuarioPorId } from "./apis/usuarios"
+import { NotificationsProvider } from "./context/NotificationsContext"
 
 function App() {
     const navigate = useNavigate()
@@ -91,15 +92,15 @@ function App() {
 
     return (
         <div className="App">
-            <TaskContextProvider>
-                <Routes>
-                    {/* Login sin DashboardLayout */}
-                    <Route path="/login" element={<Login />} />
-                    {getRoutesForRole(userRole)}
-                    {/* 404 */}
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-            </TaskContextProvider>
+            <NotificationsProvider>
+                <TaskContextProvider>
+                    <Routes>
+                        <Route path="/login" element={<Login />} />
+                        {getRoutesForRole(userRole)}
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                </TaskContextProvider>
+            </NotificationsProvider>
         </div>
     )
 }

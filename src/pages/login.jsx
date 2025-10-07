@@ -1,19 +1,23 @@
 import { useState, useEffect } from "react"
 import { supabase } from "../supabase/client"
+import { useNotifications } from "../context/NotificationsContext"
 import { useNavigate } from "react-router-dom"
 
 function Login() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const navigate = useNavigate()
+    const notifications = useNotifications()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
             const { data, error } = await supabase.auth.signInWithPassword({ email, password })
             if (error) {
-                alert("Credenciales incorrectas")
+                notifications.error("Credenciales incorrectas")
                 return
+            } else {
+                notifications.success("Inicio de sesión exitoso")
             }
             // Obtener el usuario y su rol
             const { user } = data
@@ -29,7 +33,7 @@ function Login() {
             }
         } catch (error) {
             console.error(error)
-            alert("Error al iniciar sesión")
+            notifications.error("Error al iniciar sesión")
         }
     }
 
