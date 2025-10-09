@@ -28,6 +28,7 @@ export async function createEspecie(data, userId) {
 }
 
 export async function updateEspecie(id, data) {
+    
     return await supabase.from("especies").update(data).eq("id", id)
 }
 

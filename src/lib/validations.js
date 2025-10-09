@@ -196,7 +196,7 @@ export const OtherSchema = object({
     verbatimLatitude: string().optional(),
     verbatimLongitude: string().optional(),
     verbatimCoordinates: string()
-        .regex(/^\d{1,2} \d{1,2} \d{1,2}(?:,\d+)?N; \d{1,3} \d{1,2} \d{1,2}(?:,\d+)?W$/, "DD MM SS[,dec]N; DDD MM SS[,dec]W")
+        .regex(/^\d{1,2} \d{1,2} \d{1,2}(?:\.\d+)?N; \d{1,3} \d{1,2} \d{1,2}(?:\.\d+)?W$/, "DD MM SS.decN; DDD MM SS.decW")
         .optional(),
     verbatimCoordinateSystem: string().optional(),
     verbatimSRS: string().optional(),

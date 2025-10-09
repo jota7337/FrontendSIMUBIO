@@ -21,6 +21,8 @@ export default function ObservationsTable() {
             created_at: c.created_at,
             campo: c.campo || "N/A",
             aprobado: c.aprobado ?? false,
+            catalogNumber: c.especies?.catalogNumber || "Desconocido",
+            referencia: c.especies?.reference?.referencia || "Desconocido",
         }))
         setObservations(mapped)
     }
@@ -102,7 +104,7 @@ export default function ObservationsTable() {
                 <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm">
                     <thead className="bg-gray-200 text-gray-700">
                         <tr>
-                            <th className="text-left px-6 py-4">Encargado</th>
+                            <th className="text-left px-6 py-4">Número de catalogo </th>
                             <th className="text-left px-6 py-4">id especie</th>
                             <th className="text-left px-6 py-4">Observación</th>
                             <th className="text-left px-6 py-4">Campo</th>
@@ -116,8 +118,8 @@ export default function ObservationsTable() {
                     <tbody>
                         {paginatedObservations.map((obs) => (
                             <tr key={obs.id} className="border-b hover:bg-gray-50">
-                                <td className="px-6 py-4 text-gray-800">{obs.encargado}</td>
-                                <td className="px-6 py-4 text-gray-800">{obs.especieid}</td>
+                                <td className="px-6 py-4 text-gray-800">{obs.catalogNumber}</td>
+                                <td className="px-6 py-4 text-gray-800">{obs.referencia}</td>
                                 <td className="px-6 py-4 text-gray-800">
                                     {editingId === obs.id ? (
                                         <>

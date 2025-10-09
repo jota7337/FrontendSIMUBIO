@@ -186,7 +186,9 @@ const ESPECIES_COLUMNS = new Set([
     "taxonRemarks",
 ])
 
-/** ------------------ Diccionario de mapeo flexible ES/EN ------------------ **/
+/** ------------------ Diccionario de mapeo flexible ES/EN (COMENTADO) ------------------ **/
+/*
+// NOTA: Diccionario comentado para subir datos tal como están en Excel
 const MAP = {
     // IDs & básicos
     occurrenceid: "occurrenceID",
@@ -367,8 +369,12 @@ const MAP = {
     nomenclaturalstatus: "nomenclaturalStatus",
     taxonremarks: "taxonRemarks",
 }
+*/
 
 /** ------------------ Utilidades ------------------ **/
+
+// NOTA: Funciones de normalización comentadas para subir datos tal como están en Excel
+/*
 function normalizeHeader(h) {
     if (!h && h !== 0) return ""
     return String(h)
@@ -415,14 +421,15 @@ function coerceToText(v) {
     if (v instanceof Date || typeof v === "number") return excelDateToISO(v)
     return String(v)
 }
+*/
 
 function buildHeaderMap(sampleRow) {
     const headerMap = {}
     Object.keys(sampleRow).forEach((hdr) => {
-        const norm = normalizeHeader(hdr)
-        const mapped = MAP[norm]
-        if (mapped && ESPECIES_COLUMNS.has(mapped)) headerMap[hdr] = mapped
-        else if (ESPECIES_COLUMNS.has(hdr)) headerMap[hdr] = hdr // coincide exacto
+        // Sin normalización - usar headers tal como vienen del Excel
+        if (ESPECIES_COLUMNS.has(hdr)) {
+            headerMap[hdr] = hdr // coincide exacto
+        }
     })
     return headerMap
 }
@@ -434,7 +441,8 @@ function transformRows(rowsRaw, headerMap) {
             for (const [hdr, val] of Object.entries(r)) {
                 const targetKey = headerMap[hdr]
                 if (!targetKey) continue
-                out[targetKey] = coerceToText(val)
+                // Sin transformaciones - usar valores tal como vienen del Excel
+                out[targetKey] = val
             }
             return out
         })
@@ -509,7 +517,7 @@ export async function insertRowsIntoEspecies(supabase, rows, userId, batchSize =
         const { error } = await supabase.from("especies").insert(batch, { count: "exact" })
     
         if (error) throw error
-        console.log("error", error  )
+
         total += batch.length
     }
 
@@ -530,7 +538,7 @@ export async function processAndInsertEspecies(
     // Agregar reference_by si se provee
  
      
-    console.log("referenceId", referenceId)
+
     let userId = null
     if (getUserId) userId = await getUserId()
     else {
