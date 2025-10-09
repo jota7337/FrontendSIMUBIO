@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useWindowSize } from "../../lib/useWindowSize"
 import { assignCatalogNumber } from "../../apis/curadores"
 import { getReferencesByUser, getReferencias } from "../../apis/reference"
-import { getEspecieByReference, updateEstadoEspecie } from "../../apis/Especie"
+import { getEspecieByReference, updateEstadoEspecie, deleteEspecie } from "../../apis/Especie"
 import { getUsuarioPorId } from "../../apis/usuarios"
 // Opciones de estado disponibles
 const ESTADOS_ESPECIE = [
@@ -111,6 +111,30 @@ const SpeciesCatalog = () => {
         const { estado_especie, ...speciesData } = species
 
         navigate("/form", { state: { species: { ...speciesData }, mode: "curador", fromCatalog: true } })
+    }
+
+    const handleDeleteClick = async (e, speciesId) => {
+        e.stopPropagation()
+        
+        // Confirmar eliminación
+        if (!window.confirm("¿Estás seguro de que quieres eliminar esta especie? Esta acción no se puede deshacer.")) {
+            return
+        }
+
+        try {
+            const { error } = await deleteEspecie(speciesId)
+            if (error) {
+                alert("Error al eliminar la especie")
+                console.error("Error:", error)
+            } else {
+                // Actualizar la lista de especies eliminando la especie borrada
+                setSpecies(prevSpecies => prevSpecies.filter(s => s.id !== speciesId))
+                alert("Especie eliminada correctamente")
+            }
+        } catch (error) {
+            console.error("Error al eliminar especie:", error)
+            alert("Error al eliminar la especie")
+        }
     }
 
     async function fetchReferences() {
@@ -350,6 +374,12 @@ const SpeciesCatalog = () => {
                                             onClick={() => handleAssignCatalogClick(item)}
                                         >
                                             Asignar catalogNumber
+                                        </button>
+                                        <button
+                                            className="px-2 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition"
+                                            onClick={(e) => handleDeleteClick(e, item.id)}
+                                        >
+                                            Eliminar
                                         </button>
                                     </td>
                                 </tr>

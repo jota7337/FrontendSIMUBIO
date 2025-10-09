@@ -84,9 +84,18 @@ const Form = () => {
     }
 
     const handleUpdate = async () => {
-    if (!editingId) return notifications.warning("No hay especie para actualizar")
-
-        const { data, error } = await updateEspecie(editingId, formData)
+        if (!editingId) return notifications.warning("No hay especie para actualizar")
+        
+        // Crear una copia de formData y quitar el campo 'reference' si existe
+        const cleanedFormData = { ...formData }
+        if (cleanedFormData.reference) {
+            console.log("Quitando datos de reference antes de actualizar:", cleanedFormData.reference)
+            delete cleanedFormData.reference
+        }
+        
+        console.log("Updating especie ID:", editingId, "with data:", cleanedFormData)
+        const { data, error } = await updateEspecie(editingId, cleanedFormData)
+        console.log(data, error)
 
         if (error) notifications.error("Error al actualizar especie")
         else {

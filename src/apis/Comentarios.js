@@ -42,7 +42,7 @@ export async function getComentariosByAuthor() {
       aprobado,
       profiles ( full_name ), 
       campo,
-      especies ( scientificName  , id )
+      especies ( scientificName  , id , catalogNumber , reference (referencia) )
     `
         )
         .eq("author_id", authorId)
