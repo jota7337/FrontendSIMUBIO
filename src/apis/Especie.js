@@ -1,3 +1,11 @@
+// Actualizar el número de colector (recordNumber) de una especie
+export async function updateRecordNumber(especieId, recordNumber) {
+    const response = await supabase.from("especies").update({ recordNumber }).eq("id", especieId)
+    if (response.error) {
+        console.error("Error al actualizar recordNumber de especie:", response.error)
+    }
+    return response
+}
 import { supabase } from "../supabase/client"
 // Modificar el estado de la especie
 export async function updateEstadoEspecie(especieId, estadoId) {
@@ -62,22 +70,22 @@ export async function getEspecieById(id) {
 }
 
 export async function getEspecieByReference(reference_id) {
-    const response = await supabase
-        .from("especies")
-        .select(
-            `
-      *,
-      estado_especie (
-        id,
-        code,
-        name
-       
-      )
-    `
-        )
-        .eq("reference_by", reference_id)
+        const response = await supabase
+                .from("especies")
+                .select(
+                        `
+            *,
+            estado_especie (
+                id,
+                code,
+                name
+            ),
+            reference (*)
+        `
+                )
+                .eq("reference_by", reference_id)
 
-    return response.data
+        return response.data
 }
 
 export async function createEspeciesBatch(rows, userId) {
@@ -99,7 +107,7 @@ export async function getEspecieByUser() {
             return
         }
         const userId = userData.user.id
-    const response = await supabase.from("especies").select("*").eq("created_by", userId)
+    const response = await supabase.from("especies").select("* , reference (*)").eq("created_by", userId)
 
     if (response.error) {
         console.error("Error al eliminar especie:", response.error)

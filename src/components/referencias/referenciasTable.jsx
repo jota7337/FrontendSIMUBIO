@@ -50,6 +50,7 @@ const ReferenciasTable = () => {
                     <tr>
                         <th className="border px-4 py-2">Colección</th>
                         <th className="border px-4 py-2">Curador/Admin</th>
+                        <th className="border px-4 py-2">Catalog Number</th>
                         <th className="border px-4 py-2">Acciones</th>
                     </tr>
                 </thead>
@@ -58,6 +59,7 @@ const ReferenciasTable = () => {
                         <tr key={ref.id}>
                             <td className="border px-4 py-2">{ref.referencia}</td>
                             <td className="border px-4 py-2">{ref.curador_nombre || ref.admin_nombre}</td>
+                            <td className="border px-4 py-2">{ref.catalogNumber || "—"}</td>
                             <td className="border px-4 py-2">
                                 <button className="text-blue-500 mr-2" onClick={() => handleEdit(ref)}>
                                     Editar

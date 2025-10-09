@@ -381,20 +381,33 @@ function normalizeHeader(h) {
 
 function excelDateToISO(value) {
     // Maneja fechas Excel (número serial) y Date objects
-    if (value instanceof Date) return value.toISOString()
-    if (typeof value === "number") {
-        // XLSX utils: desde 1899-12-30
-        const utc_days = Math.floor(value - 25569)
-        const utc_value = utc_days * 86400 // seg
-        const date_info = new Date(utc_value * 1000)
-        // Agrega fracción del día
-        const fractional_day = value - Math.floor(value) + 1e-8
-        const totalSeconds = Math.floor(86400 * fractional_day)
-        date_info.setSeconds(date_info.getSeconds() + totalSeconds)
-        return date_info.toISOString()
+    try {
+        if (value instanceof Date) {
+            if (isNaN(value.getTime())) return null
+            return value.toISOString()
+        }
+        if (typeof value === "number") {
+            // XLSX utils: desde 1899-12-30
+            const utc_days = Math.floor(value - 25569)
+            const utc_value = utc_days * 86400 // seg
+            const date_info = new Date(utc_value * 1000)
+            // Agrega fracción del día
+            const fractional_day = value - Math.floor(value) + 1e-8
+            const totalSeconds = Math.floor(86400 * fractional_day)
+            date_info.setSeconds(date_info.getSeconds() + totalSeconds)
+            if (isNaN(date_info.getTime())) return null
+            return date_info.toISOString()
+        }
+        // Si es string, intenta parsear como fecha, si falla, regresa como string
+        if (typeof value === "string") {
+            const d = new Date(value)
+            if (!isNaN(d.getTime())) return d.toISOString()
+            return value
+        }
+        return String(value)
+    } catch {
+        return null
     }
-    // Si es string, déjalo tal cual (tu tabla es text)
-    return String(value)
 }
 
 function coerceToText(v) {
@@ -448,10 +461,23 @@ export async function parseExcelToEspeciesRows(fileOrBuffer, sheetName = "planti
     const ws = wb.Sheets[sheetName] || wb.Sheets[wb.SheetNames[0]]
     if (!ws) throw new Error(`No se encontró la hoja "${sheetName}" ni la primera hoja.`)
 
-    const rowsRaw = XLSX.utils.sheet_to_json(ws, { defval: null })
-    const headerMap = buildHeaderMap(rowsRaw[0] || {})
-    const transformed = transformRows(rowsRaw, headerMap)
-
+    // Leer headers de la primera fila (índice 0), datos desde la tercera fila (índice 2)
+    // Usar header: 1 (primera fila como headers), range: 2 (empieza a leer datos desde la fila 3)
+    const rowsRaw = XLSX.utils.sheet_to_json(ws, { defval: null, header: 1 })
+    // rowsRaw es un array de arrays: [ [header1, header2, ...], [v1, v2, ...], ... ]
+    if (rowsRaw.length < 3) return []
+    const headers = rowsRaw[0]
+    const dataRows = rowsRaw.slice(2) // desde la fila 3 (índice 2)
+    // Convertir a array de objetos
+    const objects = dataRows.map(rowArr => {
+        const obj = {}
+        headers.forEach((h, i) => {
+            obj[h] = rowArr[i]
+        })
+        return obj
+    })
+    const headerMap = buildHeaderMap(objects[0] || {})
+    const transformed = transformRows(objects, headerMap)
     return transformed
 }
 
@@ -462,7 +488,7 @@ export async function parseExcelToEspeciesRows(fileOrBuffer, sheetName = "planti
  * @param {string} userId - auth.uid() del usuario (requerido para created_by)
  * @param {number} [batchSize=200]
  */
-export async function insertRowsIntoEspecies(supabase, rows, userId, batchSize = 200) {
+export async function insertRowsIntoEspecies(supabase, rows, userId, batchSize = 200 , referenceId) {
     if (!userId) throw new Error("userId (auth.uid()) es requerido para created_by.")
     if (!rows?.length) return { inserted: 0 }
 
@@ -472,7 +498,7 @@ export async function insertRowsIntoEspecies(supabase, rows, userId, batchSize =
         for (const k of Object.keys(row)) {
             if (ESPECIES_COLUMNS.has(k)) filtered[k] = row[k]
         }
-        return { ...filtered, created_by: userId }
+        return { ...filtered, created_by: userId , reference_by: referenceId}
     })
 
     const batches = chunk(ready, batchSize)
@@ -481,7 +507,9 @@ export async function insertRowsIntoEspecies(supabase, rows, userId, batchSize =
     for (let i = 0; i < batches.length; i++) {
         const batch = batches[i]
         const { error } = await supabase.from("especies").insert(batch, { count: "exact" })
+    
         if (error) throw error
+        console.log("error", error  )
         total += batch.length
     }
 
@@ -495,11 +523,14 @@ export async function insertRowsIntoEspecies(supabase, rows, userId, batchSize =
  */
 export async function processAndInsertEspecies(
     fileOrBuffer,
-    { supabase, sheetName = "plantilla", batchSize = 200, getUserId } = {}
+    { supabase, sheetName = "plantilla", batchSize = 200, getUserId, referenceId } = {}
 ) {
     if (!supabase) throw new Error("Supabase client requerido.")
-    const rows = await parseExcelToEspeciesRows(fileOrBuffer, sheetName)
-
+    let rows = await parseExcelToEspeciesRows(fileOrBuffer, sheetName)
+    // Agregar reference_by si se provee
+ 
+     
+    console.log("referenceId", referenceId)
     let userId = null
     if (getUserId) userId = await getUserId()
     else {
@@ -508,6 +539,6 @@ export async function processAndInsertEspecies(
         userId = data.user?.id
     }
 
-    const res = await insertRowsIntoEspecies(supabase, rows, userId, batchSize)
+    const res = await insertRowsIntoEspecies(supabase, rows, userId, batchSize , referenceId)
     return { ...res, previewSample: rows.slice(0, 10) }
 }

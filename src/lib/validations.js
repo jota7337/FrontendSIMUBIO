@@ -1,12 +1,7 @@
 import { object, number, string } from "zod"
 
 export const DatosSchema = object({
-    occurrenceID: string()
-        .regex(
-            /^([A-Z]{2,10}):([\p{L}\p{M}'\-\s]{2,100}):([0-9]{4}-[1-9][0-9]*):([\p{L}\p{M}'\-\s]{1,50})(\d{6})$/u,
-            "Formato inválido. Ejemplos: UCO:RESCATE_FAUNA_MULATOSII:1 o UNIVALLE:CRM-UV:1974-001-1"
-        )
-        .optional(),
+    occurrenceID: string().optional(),
     basisOfRecord: string().min(1, "Este campo es obligatorio"),
     type: string().min(1, "Este campo es obligatorio"),
     institutionCode: string()
@@ -83,6 +78,12 @@ export const TaxonSchema = object({
             'Debe contener solo letras y espacios. Si hay varios nombres, sepáralos con " | ", por ejemplo: "Buitre | Chulo"'
         )
         .optional(),
+        dateIdentified: string()
+        .regex(
+            /^(?:\d{4}(?:-\d{2})?(?:-\d{2})?(?:\/(?:\d{2}|\d{4}(?:-\d{2})?(?:-\d{2})?))?)$/,
+            "Debe ingresar una fecha válida en formato ISO 8601 (AAAA, AAAA-MM, AAAA-MM-DD) o un intervalo como AAAA-MM-DD/AAAA-MM-DD o 2009/2010."
+        )
+        .optional(),
 })
 
 export const EventoSchema = object({
@@ -150,15 +151,9 @@ export const RegistreSchema = object({
     identificationID: string().optional(),
     identifiedBy: string().optional(),
     identifiedByID: string().optional(),
-    dateIdentified: string()
-        .regex(
-            /^(?:\d{4}(?:-\d{2})?(?:-\d{2})?(?:\/(?:\d{2}|\d{4}(?:-\d{2})?(?:-\d{2})?))?)$/,
-            "Debe ingresar una fecha válida en formato ISO 8601 (AAAA, AAAA-MM, AAAA-MM-DD) o un intervalo como AAAA-MM-DD/AAAA-MM-DD o 2009/2010."
-        )
-        .optional(),
+
     identificationReferences: string().optional(),
     identificationVerificationStatus: string().optional(),
-    verbatimIdentification: string().optional(),
     identificationRemarks: string()
         .max(300, "El comentario es demasiado largo") // límite de caracteres razonable
         .refine((val) => val.trim().split(/\s+/).length <= 20, {
@@ -167,6 +162,12 @@ export const RegistreSchema = object({
         .optional(),
     identificationQualifier: string().optional(),
     countryCode: string().min(1, "Este campo es obligatorio"),
+    eventDate: string()
+        .regex(
+            /^(?:\d{4}(?:-\d{2})?(?:-\d{2})?(?:\/(?:\d{2}|\d{4}(?:-\d{2})?(?:-\d{2})?))?)$/,
+            "Debe ingresar una fecha válida en formato ISO 8601 (AAAA, AAAA-MM, AAAA-MM-DD) o un intervalo como AAAA-MM-DD/AAAA-MM-DD o 2009/2010."
+        )
+        .optional(),
 })
 
 export const FamilySchema = object({
@@ -199,19 +200,30 @@ export const OtherSchema = object({
         .optional(),
     verbatimCoordinateSystem: string().optional(),
     verbatimSRS: string().optional(),
-    decimalLatitude: number({
-        required_error: "La latitud es obligatoria",
-        invalid_type_error: "La latitud debe ser un número decimal",
-    })
-        .min(-90, { message: "La latitud no puede ser menor a -90" })
-        .max(90, { message: "La latitud no puede ser mayor a 90" })
+    
+    decimalLatitude: string()
+        .regex(
+            /^[0-9]+(\.[0-9]+)?$/,
+            "Solo se permiten números y punto decimal. No se aceptan comas ni letras"
+        )
+        .refine((val) => {
+            const num = parseFloat(val);
+            return num >= -90 && num <= 90;
+        }, {
+            message: "La latitud debe estar entre -90 y 90 grados"
+        })
         .optional(),
-    decimalLongitude: number({
-        required_error: "La longitud es obligatoria",
-        invalid_type_error: "La longitud debe ser un número decimal",
-    })
-        .min(-180, { message: "La longitud no puede ser menor a -180" })
-        .max(180, { message: "La longitud no puede ser mayor a 180" })
+    decimalLongitude: string()
+        .regex(
+            /^-?[0-9]+(\.[0-9]+)?$/,
+            "Solo se permiten números, punto decimal y signo negativo. No se aceptan comas ni letras"
+        )
+        .refine((val) => {
+            const num = parseFloat(val);
+            return num >= -180 && num <= 180;
+        }, {
+            message: "La longitud debe estar entre -180 y 180 grados"
+        })
         .optional(),
     geodeticDatum: string().optional(),
 })

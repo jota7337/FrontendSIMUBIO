@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
 import { assignCatalogNumber } from "../../apis/curadores"
-import { getReferencesByUser } from "../../apis/reference"
+import { getReferencesByUser, getReferencias } from "../../apis/reference"
 import { getEspecieByReference, updateEstadoEspecie } from "../../apis/Especie"
+import { getUsuarioPorId } from "../../apis/usuarios"
 // Opciones de estado disponibles
 const ESTADOS_ESPECIE = [
     { id: 1, code: "apr", label: "Aprobada" },
@@ -63,12 +64,15 @@ const SpeciesCatalog = () => {
     const [loadingAssign, setLoadingAssign] = useState(false)
     // Último número de catálogo registrado
     const getLastCatalogNumber = () => {
-        // Filtrar los catalogNumber válidos con formato MCUB-R-NE-000380
+        // Filtrar los catalogNumber válidos que terminen con 6 dígitos (MCUB-R-NE-000380, MCUB-R-RE-000380, MCUB-R-MY-000380, etc.)
         const numbers = species
             .map((s) => s.catalogNumber)
-            .filter((cn) => typeof cn === "string" && /^MCUB-R-NE-\d{6}$/.test(cn))
-            .map((cn) => parseInt(cn.split("-").pop(), 10))
-            .filter((num) => !isNaN(num))
+            .filter((cn) => typeof cn === "string" && /\d{6}$/.test(cn))
+            .map((cn) => {
+                const match = cn.match(/(\d{6})$/);
+                return match ? parseInt(match[1], 10) : null;
+            })
+            .filter((num) => num !== null && !isNaN(num))
         if (numbers.length === 0) return null
         return Math.max(...numbers)
     }
@@ -109,8 +113,29 @@ const SpeciesCatalog = () => {
     }
 
     async function fetchReferences() {
-        const data = await getReferencesByUser()
-        setReferences(data)
+        try {
+            // Obtener información del usuario actual
+            const { data: userData } = await getUsuarioPorId()
+            const userRole = userData?.roles?.name
+            
+            // Si es administrador, traer todas las referencias
+            if (userRole === "Administrador") {
+                const allReferences = await getReferencias()
+                // Transformar el formato para que sea compatible con el componente
+                const transformedReferences = allReferences.map(ref => ({
+                    id: ref.id,
+                    referencia: ref.referencia
+                }))
+                setReferences(transformedReferences)
+            } else {
+                // Si no es administrador, traer solo las referencias del usuario
+                const data = await getReferencesByUser()
+                setReferences(data)
+            }
+        } catch (error) {
+            console.error("Error al obtener referencias:", error)
+            setReferences([])
+        }
     }
     useEffect(() => {
         fetchReferences()
@@ -332,9 +357,9 @@ const SpeciesCatalog = () => {
                         {/* Mostrar el último catalogNumber registrado */}
                         <div className="mb-2">
                             <span className="font-semibold text-blue-700">
-                                {lastCatalogNumber
-                                    ? `Este es el último catálogo registrado: MCUB-R-NE-${lastCatalogNumber.toString().padStart(6, "0")}`
-                                    : "No hay catálogo registrado aún."}
+                                {lastCatalogNumber && species[0]?.reference?.catalogNumber
+                                    ? `Este es el último catálogo registrado: ${species[0].reference.catalogNumber}${lastCatalogNumber.toString().padStart(6, "0")}`
+                                    : `No hay catálogo registrado aún su catalogo base es : ${species[0]?.reference?.catalogNumber || "MCUB-R-NE-"}`}
                             </span>
                         </div>
                         {assignCatalogSpecies ? (

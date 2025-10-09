@@ -15,6 +15,7 @@ const UsuarioDialog = ({ open, onClose, onSaved, initialData }) => {
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+    const [confirmPassword, setConfirmPassword] = useState("")
 
     useEffect(() => {
         if (initialData) {
@@ -61,6 +62,10 @@ const UsuarioDialog = ({ open, onClose, onSaved, initialData }) => {
             if (!domainRegex.test(form.email)) {
                 throw new Error("El correo debe terminar en @unbosque.edu.co")
             }
+            if (!initialData) {
+                if (!form.password) throw new Error("La contraseña es requerida para crear usuario")
+                if (form.password !== confirmPassword) throw new Error("Las contraseñas no coinciden")
+            }
             if (initialData) {
                 // Edit mode: call updateUsuario
                 await updateUsuario(initialData.id, {
@@ -72,7 +77,6 @@ const UsuarioDialog = ({ open, onClose, onSaved, initialData }) => {
                 })
                 onSaved && onSaved({ success: true })
             } else {
-                if (!form.password) throw new Error("La contraseña es requerida para crear usuario")
                 await createUsuario({
                     email: form.email,
                     password: form.password,
@@ -123,6 +127,7 @@ const UsuarioDialog = ({ open, onClose, onSaved, initialData }) => {
                     </div>
 
                     {!initialData && (
+                        <>
                         <div>
                             <label className="block text-sm font-medium">Contraseña</label>
                             <input
@@ -133,6 +138,17 @@ const UsuarioDialog = ({ open, onClose, onSaved, initialData }) => {
                                 className="w-full border rounded px-2 py-1"
                             />
                         </div>
+                        <div>
+                            <label className="block text-sm font-medium">Confirmar contraseña</label>
+                            <input
+                                name="confirmPassword"
+                                value={confirmPassword}
+                                onChange={e => setConfirmPassword(e.target.value)}
+                                type="password"
+                                className="w-full border rounded px-2 py-1"
+                            />
+                        </div>
+                        </>
                     )}
 
                     <div>
@@ -145,7 +161,7 @@ const UsuarioDialog = ({ open, onClose, onSaved, initialData }) => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Nombre científico</label>
+                        <label className="block text-sm font-medium">Número Recolector</label>
                         <input
                             name="scientificName"
                             value={form.scientificName}
