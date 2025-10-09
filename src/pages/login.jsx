@@ -34,7 +34,7 @@ function Login() {
             }
             // Consultar si tiene perfil
             const { data: profileData } = await getUsuarioPorId()
-            console.log("Profile Data:", profileData) // Verificar los datos del perfil
+     
             if (!profileData) {
                 setShowProfileDialog(true)
             } else {

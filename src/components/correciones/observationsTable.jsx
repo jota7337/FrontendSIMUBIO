@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useWindowSize } from "../../lib/useWindowSize"
 import { Pencil, Trash } from "lucide-react"
 import { updateComentario, deleteComentario, getComentariosByAuthor } from "../../apis/Comentarios"
 
@@ -56,6 +57,19 @@ export default function ObservationsTable() {
         return matchEspecie && matchAprobado
     })
 
+    // PAGINACIÓN responsiva
+    const { breakpoint } = useWindowSize()
+    let itemsPerPage = 20
+    if (breakpoint === "xs") itemsPerPage = 5
+    else if (breakpoint === "sm") itemsPerPage = 8
+    else if (breakpoint === "md") itemsPerPage = 12
+    else if (breakpoint === "lg") itemsPerPage = 16
+    // xl = 20
+    const [currentPage, setCurrentPage] = useState(1)
+    const totalPages = Math.ceil(filteredObservations.length / itemsPerPage)
+    const paginatedObservations = filteredObservations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    useEffect(() => { setCurrentPage(1) }, [itemsPerPage])
+
     return (
         <div className="w-full p-6 bg-gray-100 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Correcciones </h2>
@@ -100,7 +114,7 @@ export default function ObservationsTable() {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredObservations.map((obs) => (
+                        {paginatedObservations.map((obs) => (
                             <tr key={obs.id} className="border-b hover:bg-gray-50">
                                 <td className="px-6 py-4 text-gray-800">{obs.encargado}</td>
                                 <td className="px-6 py-4 text-gray-800">{obs.especieid}</td>
@@ -169,6 +183,28 @@ export default function ObservationsTable() {
                     </tbody>
                 </table>
             </div>
+            {/* Controles de paginación */}
+            {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-6 gap-3">
+                    <button
+                        className="ub-button-outline"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        Anterior
+                    </button>
+                    <span className="mx-2 ub-text-primary font-medium">
+                        Página {currentPage} de {totalPages}
+                    </span>
+                    <button
+                        className="ub-button-outline"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        Siguiente
+                    </button>
+                </div>
+            )}
         </div>
     )
 }

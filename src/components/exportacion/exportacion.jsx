@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useWindowSize } from "../../lib/useWindowSize"
 import { FileText, FileSpreadsheet, Upload } from "lucide-react"
 import { getReferences } from "../../apis/reference"
 import { createEspeciesBatch, getEspecieByReference } from "../../apis/Especie"
@@ -9,6 +10,18 @@ import { exportDarwinCoreTSV } from "../../lib/export_tab_logic"
 
 const ExportEspecie = () => {
     const [referenceObservations, setReferenceObservations] = useState([])
+    // Paginación responsiva
+    const { breakpoint } = useWindowSize()
+    let itemsPerPage = 20
+    if (breakpoint === "xs") itemsPerPage = 5
+    else if (breakpoint === "sm") itemsPerPage = 8
+    else if (breakpoint === "md") itemsPerPage = 12
+    else if (breakpoint === "lg") itemsPerPage = 16
+    // xl = 20
+    const [currentPage, setCurrentPage] = useState(1)
+    const totalPages = Math.ceil(referenceObservations.length / itemsPerPage)
+    const paginatedReferences = referenceObservations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    useEffect(() => { setCurrentPage(1) }, [itemsPerPage])
     const [uploadLog, setUploadLog] = useState("")
     const [uploading, setUploading] = useState(false)
     const [dateRanges, setDateRanges] = useState({})
@@ -127,6 +140,8 @@ const ExportEspecie = () => {
         fetchAllObservations()
     }, [])
 
+
+
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
             <div className="flex items-center justify-between mb-4">
@@ -181,7 +196,7 @@ const ExportEspecie = () => {
 
             {uploadLog && <pre className="mb-6 p-3 bg-white rounded-lg border text-sm whitespace-pre-wrap">{uploadLog}</pre>}
 
-            {referenceObservations.map((ref) => (
+            {paginatedReferences.map((ref) => (
                 <div key={ref.referencia} className="mb-6 bg-white shadow-md rounded-lg p-4">
                     <div className="flex justify-between items-center mb-3">
                         <h3 className="text-lg font-semibold text-gray-700">{ref.referencia}</h3>
@@ -218,6 +233,29 @@ const ExportEspecie = () => {
                     </div>
                 </div>
             ))}
+
+            {/* Controles de paginación */}
+            {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-6 gap-3">
+                    <button
+                        className="ub-button-outline"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        Anterior
+                    </button>
+                    <span className="mx-2 ub-text-primary font-medium">
+                        Página {currentPage} de {totalPages}
+                    </span>
+                    <button
+                        className="ub-button-outline"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        Siguiente
+                    </button>
+                </div>
+            )}
         </div>
     )
 }

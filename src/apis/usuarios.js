@@ -3,7 +3,7 @@ import { supabase } from "../supabase/client"
 export async function getUsuarioPorId() {
     const { data: userData } = await supabase.auth.getUser()
     const userId = userData.user.id
-    console.log("User ID:", userId) // Verificar el ID del usuario
+
         const { data, error } = await supabase
                 .from("profiles")
                 .select(
@@ -21,7 +21,7 @@ export async function getUsuarioPorId() {
                 )
                 .eq("id", userId)
                 .single()
-        console.log("Profile Fetch Error:", error) // Verificar si hay un error
+     
     return { data, error }
 }
 

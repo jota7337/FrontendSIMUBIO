@@ -78,7 +78,7 @@ export async function createUsuario({ email, password, full_name, rol, orcid, sc
         scientific_name,
     })
 
-    console.log("Profile Insert Error:", profileError)
+  
     if (profileError) throw "El usuario se creó, pero no se pudo crear el perfil."
 
     // Restaurar la sesión del admin para que no quede autenticado como el nuevo usuario

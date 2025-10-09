@@ -5,6 +5,7 @@ import { getEspecies, deleteEspecie, getEspecieByUser, updateRecordNumber } from
 import { getUsuarioPorId } from "../../apis/usuarios"
 import { getComentariosByEspecie, updateComentario } from "../../apis/Comentarios"
 import { useEffect, useState } from "react"
+import { useWindowSize } from "../../lib/useWindowSize"
 
 const ListEspecies = () => {
     const [data, setData] = useState([])
@@ -173,8 +174,14 @@ const ListEspecies = () => {
         return matchesSearch && matchesCatalog && matchesMunicipio && matchesOrden && matchesFamilia
     })
 
-    // Paginación
-    const itemsPerPage = 20
+    // Paginación responsiva
+    const { breakpoint } = useWindowSize()
+    let itemsPerPage = 20
+    if (breakpoint === "xs") itemsPerPage = 5
+    else if (breakpoint === "sm") itemsPerPage = 8
+    else if (breakpoint === "md") itemsPerPage = 12
+    else if (breakpoint === "lg") itemsPerPage = 16
+    // xl = 20
     const [currentPage, setCurrentPage] = useState(1)
     const totalPages = Math.ceil(filteredData.length / itemsPerPage)
     const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -184,6 +191,8 @@ const ListEspecies = () => {
             setCurrentPage(newPage)
         }
     }
+    // Resetear página si cambia el tamaño de página
+    useEffect(() => { setCurrentPage(1) }, [itemsPerPage])
 
     return (
         <div className="w-full p-6 ub-container min-h-screen">
