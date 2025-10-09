@@ -434,6 +434,35 @@ function buildHeaderMap(sampleRow) {
     return headerMap
 }
 
+// Convierte número Excel a fecha YYYY-MM-DD
+function excelNumberToDateString(value) {
+    if (typeof value !== "number") return value
+    // Excel base: 1899-12-30
+    const utc_days = Math.floor(value - 25569)
+    const date = new Date(utc_days * 86400 * 1000)
+    // Ajuste por zona horaria
+    const yyyy = date.getUTCFullYear()
+    const mm = String(date.getUTCMonth() + 1).padStart(2, '0')
+    const dd = String(date.getUTCDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}`
+}
+
+// Convierte número Excel a hora HH:mm:ss
+function excelNumberToTimeString(value) {
+    if (typeof value !== "number") return value
+    // Solo la fracción decimal representa la hora
+    let dayFraction = value
+    if (value > 1) dayFraction = value - Math.floor(value)
+    const totalSeconds = Math.round(dayFraction * 86400)
+    const hh = String(Math.floor(totalSeconds / 3600)).padStart(2, '0')
+    const mm = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0')
+    const ss = String(totalSeconds % 60).padStart(2, '0')
+    return `${hh}:${mm}:${ss}`
+}
+
+const FIELDS_AS_DATE = ["eventDate", "verbatimEventDate", "georeferencedDate", "dateIdentified"]
+const FIELDS_AS_TIME = ["eventTime"]
+
 function transformRows(rowsRaw, headerMap) {
     return rowsRaw
         .map((r) => {
@@ -441,8 +470,14 @@ function transformRows(rowsRaw, headerMap) {
             for (const [hdr, val] of Object.entries(r)) {
                 const targetKey = headerMap[hdr]
                 if (!targetKey) continue
-                // Sin transformaciones - usar valores tal como vienen del Excel
-                out[targetKey] = val
+                // Si es campo de fecha
+                if (FIELDS_AS_DATE.includes(targetKey)) {
+                    out[targetKey] = excelNumberToDateString(val)
+                } else if (FIELDS_AS_TIME.includes(targetKey)) {
+                    out[targetKey] = excelNumberToTimeString(val)
+                } else {
+                    out[targetKey] = val
+                }
             }
             return out
         })
