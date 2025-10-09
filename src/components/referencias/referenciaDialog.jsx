@@ -7,6 +7,7 @@ const ReferenciaDialog = ({ open, onClose, referencia }) => {
     const [form, setForm] = useState({
         id_curador: referencia?.id_curador || "",
         referencia: referencia?.referencia || "",
+        catalogNumber: referencia?.catalogNumber || "",
     })
     const [loading, setLoading] = useState(false)
 
@@ -16,9 +17,10 @@ const ReferenciaDialog = ({ open, onClose, referencia }) => {
             setForm({
                 id_curador: referencia.id_curador || "",
                 referencia: referencia.referencia || "",
+                catalogNumber: referencia.catalogNumber || "",
             })
         } else {
-            setForm({ id_curador: "", referencia: "" })
+            setForm({ id_curador: "", referencia: "", catalogNumber: "" })
         }
     }, [referencia])
 
@@ -75,6 +77,15 @@ const ReferenciaDialog = ({ open, onClose, referencia }) => {
                             onChange={handleChange}
                             className="w-full border px-2 py-1 rounded"
                             required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-1">Catalog Number</label>
+                        <input
+                            name="catalogNumber"
+                            value={form.catalogNumber}
+                            onChange={handleChange}
+                            className="w-full border px-2 py-1 rounded"
                         />
                     </div>
                     <div className="flex justify-end gap-2">

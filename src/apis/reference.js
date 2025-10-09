@@ -1,4 +1,3 @@
-// ...existing code...
 import { supabase } from "../supabase/client"
 export async function getReferencesByUser() {
     const { data: userData } = await supabase.auth.getUser()
@@ -15,7 +14,7 @@ export async function getReferencesByUser() {
 export async function getReferencias() {
     const { data, error } = await supabase
         .from("reference")
-        .select("id, referencia, id_curador, created_at, profiles(full_name)")
+        .select("id, referencia, id_curador, created_at, profiles(full_name), catalogNumber")
         .order("created_at", { ascending: false })
     if (error) throw error
 
@@ -25,16 +24,17 @@ export async function getReferencias() {
         id_curador: ref.id_curador,
         curador_nombre: ref.profiles?.full_name,
         created_at: ref.created_at,
+        catalogNumber: ref.catalogNumber || null,
     }))
 }
 
-export async function createReferencia({ id_curador, referencia }) {
-    const { error } = await supabase.from("reference").insert([{ id_curador, referencia }])
+export async function createReferencia({ id_curador, referencia , catalogNumber }) {
+    const { error } = await supabase.from("reference").insert([{ id_curador, referencia , catalogNumber }])
     if (error) throw error
 }
 
-export async function updateReferencia(id, { id_curador, referencia }) {
-    const { error } = await supabase.from("reference").update({ id_curador, referencia }).eq("id", id)
+export async function updateReferencia(id, { id_curador, referencia , catalogNumber }) {
+    const { error } = await supabase.from("reference").update({ id_curador, referencia , catalogNumber }).eq("id", id)
     if (error) throw error
 }
 
@@ -44,7 +44,7 @@ export async function deleteReferencia(id) {
 }
 
 export async function getReferences() {
-    const { data, error } = await supabase.from("reference").select("id, referencia")
+    const { data, error } = await supabase.from("reference").select("id, referencia , catalogNumber")
     if (error) {
         console.error("Error al obtener referencias:", error)
         return []

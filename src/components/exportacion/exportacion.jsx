@@ -1,17 +1,33 @@
 import { useState, useEffect } from "react"
+import { useWindowSize } from "../../lib/useWindowSize"
 import { FileText, FileSpreadsheet, Upload } from "lucide-react"
 import { getReferences } from "../../apis/reference"
 import { createEspeciesBatch, getEspecieByReference } from "../../apis/Especie"
-import { parseExcelToEspeciesRows } from "../../lib/excel-especies-logic"
+import { processAndInsertEspecies } from "../../lib/excel-especies-logic"
 import { supabase } from "../../supabase/client"
 import { exportEspeciesWithTemplate } from "../../lib/table-especie-logic"
 import { exportDarwinCoreTSV } from "../../lib/export_tab_logic"
 
 const ExportEspecie = () => {
     const [referenceObservations, setReferenceObservations] = useState([])
+    // Paginación responsiva
+    const { breakpoint } = useWindowSize()
+    let itemsPerPage = 20
+    if (breakpoint === "xs") itemsPerPage = 5
+    else if (breakpoint === "sm") itemsPerPage = 8
+    else if (breakpoint === "md") itemsPerPage = 12
+    else if (breakpoint === "lg") itemsPerPage = 16
+    // xl = 20
+    const [currentPage, setCurrentPage] = useState(1)
+    const totalPages = Math.ceil(referenceObservations.length / itemsPerPage)
+    const paginatedReferences = referenceObservations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    useEffect(() => { setCurrentPage(1) }, [itemsPerPage])
     const [uploadLog, setUploadLog] = useState("")
     const [uploading, setUploading] = useState(false)
     const [dateRanges, setDateRanges] = useState({})
+    const [showRefDialog, setShowRefDialog] = useState(false)
+    const [references, setReferences] = useState([])
+    const [selectedRefId, setSelectedRefId] = useState("")
 
     const handleDateChange = (referencia, type, value) => {
         setDateRanges((prev) => ({
@@ -35,50 +51,71 @@ const ExportEspecie = () => {
     }
 
     const handleUploadExcel = async () => {
-        try {
-            setUploading(true)
-            setUploadLog("Selecciona un archivo Excel...")
-
-            const input = document.createElement("input")
-            input.type = "file"
-            input.accept = ".xlsx,.xls,.csv"
-
-            input.onchange = async (e) => {
-                const file = e.target.files?.[0]
-                if (!file) {
-                    setUploadLog("Operación cancelada.")
-                    setUploading(false)
-                    return
-                }
-
-                try {
-                    setUploadLog("Leyendo y transformando archivo...")
-                    // 1) Parsear a filas con columnas válidas
-                    const rows = await parseExcelToEspeciesRows(file, "Plantilla")
-                    // 2) Obtener userId con tu supabase
-                    const { data, error } = await supabase.auth.getUser()
-                    if (error) throw error
-                    const userId = data?.user?.id
-                    if (!userId) throw new Error("No hay usuario autenticado.")
-
-                    // 3) Insertar en lote usando tu API (sin crear cliente aquí)
-                    const { count } = await createEspeciesBatch(rows, userId)
-
-                    setUploadLog(`Insertadas ${count} filas en public.especies.`)
-                    // 4) Refrescar la lista para que se vea actualizado
-                    await fetchAllObservations()
-                } catch (err) {
-                    setUploadLog("✖ Error: " + err.message)
-                } finally {
-                    setUploading(false)
-                }
-            }
-
-            input.click()
-        } catch (err) {
-            setUploadLog("✖ Error: " + err.message)
-            setUploading(false)
+        // Mostrar el diálogo de selección de referencia antes de abrir el input
+        setShowRefDialog(true)
+        if (references.length === 0) {
+            const refs = await getReferences()
+            setReferences(refs)
         }
+    }
+
+    // Lógica para abrir el input de archivo después de seleccionar la referencia
+    const handleSelectReference = () => {
+        if (!selectedRefId) return
+        setShowRefDialog(false)
+        setTimeout(() => {
+            openFileInputWithReference(selectedRefId)
+        }, 200)
+    }
+
+    // Nueva lógica: usa processAndInsertEspecies y agrega reference_by a cada fila
+    const openFileInputWithReference = (refId) => {
+        setUploading(true)
+        setUploadLog("📂 Selecciona un archivo Excel...")
+        const input = document.createElement("input")
+        input.type = "file"
+        input.accept = ".xlsx,.xls,.csv"
+        input.onchange = async (e) => {
+            const file = e.target.files?.[0]
+            if (!file) {
+                setUploadLog("Operación cancelada.")
+                setUploading(false)
+                return
+            }
+            try {
+                setUploadLog("⏳ Procesando archivo...")
+                // Usar processAndInsertEspecies, agregando reference_by a cada fila
+                const result = await processAndInsertEspecies(file, {
+                    supabase,
+                    sheetName: "Plantilla", // nombre de la hoja, minúscula
+                    batchSize: 200,
+                    getUserId: async () => {
+                        const { data, error } = await supabase.auth.getUser()
+                        if (error) throw error
+                        const userId = data?.user?.id
+                        if (!userId) throw new Error("No hay usuario autenticado.")
+                        return userId
+                    },
+                    referenceId: refId,
+                })
+
+                // Agregar reference_by a cada fila antes de insertar (esto requiere modificar excel-especies-logic.js si quieres hacerlo dentro de la función)
+                // Aquí, como processAndInsertEspecies ya inserta, solo mostramos el log y ejemplo
+                setUploadLog(
+                    `✔ Insertadas ${result.inserted} filas en public.especies.\nEjemplo:\n${JSON.stringify(
+                        result.previewSample.map(r => ({ ...r, reference_by: refId })),
+                        null,
+                        2
+                    )}`
+                )
+                await fetchAllObservations()
+            } catch (err) {
+                setUploadLog("✖ Error: " + err.message)
+            } finally {
+                setUploading(false)
+            }
+        }
+        input.click()
     }
 
     async function fetchAllObservations() {
@@ -103,6 +140,8 @@ const ExportEspecie = () => {
         fetchAllObservations()
     }, [])
 
+
+
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
             <div className="flex items-center justify-between mb-4">
@@ -118,9 +157,46 @@ const ExportEspecie = () => {
                 </button>
             </div>
 
+            {/* Diálogo para seleccionar referencia antes de abrir el input de archivo */}
+            {showRefDialog && (
+                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg min-w-[350px]">
+                        <h2 className="text-lg font-bold mb-4">Selecciona una referencia</h2>
+                        <select
+                            className="w-full border px-2 py-2 rounded mb-4"
+                            value={selectedRefId}
+                            onChange={e => setSelectedRefId(e.target.value)}
+                        >
+                            <option value="">Selecciona una referencia...</option>
+                            {references.map(ref => (
+                                <option key={ref.id} value={ref.id}>
+                                    {ref.referencia} {ref.catalogNumber ? `(${ref.catalogNumber})` : ""}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                className="px-4 py-2 bg-gray-300 rounded"
+                                onClick={() => { setShowRefDialog(false); setSelectedRefId("") }}
+                                disabled={uploading}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-green-600 text-white rounded"
+                                onClick={handleSelectReference}
+                                disabled={!selectedRefId || uploading}
+                            >
+                                Continuar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {uploadLog && <pre className="mb-6 p-3 bg-white rounded-lg border text-sm whitespace-pre-wrap">{uploadLog}</pre>}
 
-            {referenceObservations.map((ref) => (
+            {paginatedReferences.map((ref) => (
                 <div key={ref.referencia} className="mb-6 bg-white shadow-md rounded-lg p-4">
                     <div className="flex justify-between items-center mb-3">
                         <h3 className="text-lg font-semibold text-gray-700">{ref.referencia}</h3>
@@ -157,6 +233,29 @@ const ExportEspecie = () => {
                     </div>
                 </div>
             ))}
+
+            {/* Controles de paginación */}
+            {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-6 gap-3">
+                    <button
+                        className="ub-button-outline"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        Anterior
+                    </button>
+                    <span className="mx-2 ub-text-primary font-medium">
+                        Página {currentPage} de {totalPages}
+                    </span>
+                    <button
+                        className="ub-button-outline"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        Siguiente
+                    </button>
+                </div>
+            )}
         </div>
     )
 }

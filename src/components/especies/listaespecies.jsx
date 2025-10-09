@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom"
 import SpeciesDetailsDialog from "./especiedialog"
 import ComentariosDialog from "./comentariosdialog"
-import { getEspecies, deleteEspecie, getEspecieByUser } from "../../apis/Especie"
+import { getEspecies, deleteEspecie, getEspecieByUser, updateRecordNumber } from "../../apis/Especie"
+import { getUsuarioPorId } from "../../apis/usuarios"
 import { getComentariosByEspecie, updateComentario } from "../../apis/Comentarios"
 import { useEffect, useState } from "react"
+import { useWindowSize } from "../../lib/useWindowSize"
 
 const ListEspecies = () => {
     const [data, setData] = useState([])
@@ -36,13 +38,20 @@ const ListEspecies = () => {
         setComentariosDialogList((list) => list.map((c) => (c.id === comentario.id ? { ...c, aprobado: true } : c)))
     }
 
+    // Estado para el diálogo de asignar número de colector
+    const [showAssignDialog, setShowAssignDialog] = useState(false)
+    const [assignSpecies, setAssignSpecies] = useState(null)
+    const [collectorInput, setCollectorInput] = useState("")
+    const [loadingAssign, setLoadingAssign] = useState(false)
+    const [suggestedCollector, setSuggestedCollector] = useState("")
+    const [userScientificName, setUserScientificName] = useState("")
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true)
             const { data: especies, error } = await getEspecieByUser()
             if (!error && Array.isArray(especies)) {
                 setData(especies)
-
                 const counts = {}
                 for (const especie of especies) {
                     if (especie.id) {
@@ -54,10 +63,61 @@ const ListEspecies = () => {
             } else {
                 setData([])
             }
+            // Obtener scientific_name del usuario
+            const { data: user } = await getUsuarioPorId()
+            setUserScientificName(user?.scientific_name || "")
             setLoading(false)
         }
         fetchData()
     }, [])
+
+    // Sugerir el siguiente número de colector
+    const getLastCollectorNumber = () => {
+        if (!userScientificName) return null
+        const numbers = data
+            .map((s) => s.recordNumber)
+            .filter((rn) => typeof rn === "string" && rn.startsWith(userScientificName))
+            .map((rn) => {
+                const match = rn.match(/(\d{3,})$/)
+                return match ? parseInt(match[1], 10) : null
+            })
+            .filter((num) => num !== null && !isNaN(num))
+        if (numbers.length === 0) return null
+        return Math.max(...numbers)
+    }
+    useEffect(() => {
+        if (!userScientificName) return
+        const last = getLastCollectorNumber()
+        if (last !== null) {
+            setSuggestedCollector(userScientificName + String(last + 1).padStart(3, "0"))
+        } else {
+            setSuggestedCollector(userScientificName + "001")
+        }
+    }, [data, userScientificName])
+
+    const handleAssignCollectorClick = (species) => {
+        setAssignSpecies(species)
+        setCollectorInput(species?.recordNumber || suggestedCollector)
+        setShowAssignDialog(true)
+    }
+    const handleCloseAssignDialog = () => {
+        setShowAssignDialog(false)
+        setAssignSpecies(null)
+        setCollectorInput("")
+    }
+    const handleAssignSubmit = async (e) => {
+        e.preventDefault()
+        if (!assignSpecies || !collectorInput) return
+        setLoadingAssign(true)
+        const res = await updateRecordNumber(assignSpecies.id, collectorInput)
+        setLoadingAssign(false)
+        if (!res.error) {
+            setData((prev) => prev.map((s) => (s.id === assignSpecies.id ? { ...s, recordNumber: collectorInput } : s)))
+            handleCloseAssignDialog()
+        } else {
+            alert("Error al asignar número de colector o ya está en uso")
+        }
+    }
 
     const handleSearch = (e) => {
         setSearch(e.target.value)
@@ -114,8 +174,14 @@ const ListEspecies = () => {
         return matchesSearch && matchesCatalog && matchesMunicipio && matchesOrden && matchesFamilia
     })
 
-    // Paginación
-    const itemsPerPage = 20
+    // Paginación responsiva
+    const { breakpoint } = useWindowSize()
+    let itemsPerPage = 20
+    if (breakpoint === "xs") itemsPerPage = 5
+    else if (breakpoint === "sm") itemsPerPage = 8
+    else if (breakpoint === "md") itemsPerPage = 12
+    else if (breakpoint === "lg") itemsPerPage = 16
+    // xl = 20
     const [currentPage, setCurrentPage] = useState(1)
     const totalPages = Math.ceil(filteredData.length / itemsPerPage)
     const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -125,6 +191,8 @@ const ListEspecies = () => {
             setCurrentPage(newPage)
         }
     }
+    // Resetear página si cambia el tamaño de página
+    useEffect(() => { setCurrentPage(1) }, [itemsPerPage])
 
     return (
         <div className="w-full p-6 ub-container min-h-screen">
@@ -229,6 +297,66 @@ const ListEspecies = () => {
                                             >
                                                 🗑️
                                             </span>
+                                            <button
+                                                className="px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 transition text-xs"
+                                                onClick={() => handleAssignCollectorClick(item)}
+                                            >
+                                                Asignar número de colector
+                                            </button>
+            {/* Diálogo para asignar número de colector */}
+            {showAssignDialog && (
+                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg min-w-[300px]">
+                        <h2 className="text-lg font-bold mb-4">Asignar número de colector</h2>
+                        <div className="mb-2">
+                            <span className="font-semibold text-blue-700">
+                                Sugerido: {suggestedCollector}
+                            </span>
+                        </div>
+                        {assignSpecies ? (
+                            <div className="mb-2">
+                                <div className="mb-2">
+                                    Número actual: {" "}
+                                    <span className="font-semibold">{assignSpecies.recordNumber || "Sin número"}</span>
+                                </div>
+                                <div className="mb-2">
+                                    Nombre científico: {" "}
+                                    <span className="font-semibold">{assignSpecies.scientificName || assignSpecies.nombre}</span>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="mb-2">Selecciona una especie para asignar el número de colector.</div>
+                        )}
+                        <form onSubmit={handleAssignSubmit}>
+                            <input
+                                type="text"
+                                placeholder="Nuevo número de colector"
+                                className="border px-2 py-1 rounded w-full mb-4"
+                                value={collectorInput}
+                                onChange={(e) => setCollectorInput(e.target.value)}
+                                disabled={loadingAssign}
+                            />
+                            <div className="flex justify-end gap-2">
+                                <button
+                                    type="button"
+                                    className="px-4 py-2 bg-gray-300 rounded"
+                                    onClick={handleCloseAssignDialog}
+                                    disabled={loadingAssign}
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-green-600 text-white rounded"
+                                    disabled={loadingAssign || !collectorInput}
+                                >
+                                    {loadingAssign ? "Asignando..." : "Asignar"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
                                             <span
                                                 title="Comentarios de la especie"
                                                 className="cursor-pointer text-green-700 text-xl flex items-center gap-1"

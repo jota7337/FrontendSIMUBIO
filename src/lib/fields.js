@@ -1,5 +1,3 @@
-// Función para cargar referencias desde la API
-import { getReferences } from "../apis/reference"
 export const camposTaxon = [
     { label: "ID del taxón", name: "taxonID", help: "Identificador único del taxón (por ejemplo: UCO:ESPECIE:12345)." },
     {
@@ -34,7 +32,7 @@ export const camposTaxon = [
     // { label: "Epíteto infragenérico", name: "infragenericEpithet" },
     // { label: "Epíteto específico", name: "specificEpithet" },
     // { label: "Epíteto infragenérico", name: "infraspecificEpithet" },
-    { label: "Epíteto cultivar", name: "cultivarEpithet", help: "Epíteto cultivar, usado en plantas cultivadas." },
+    { label: "Epíteto específico", name: "cultivarEpithet", help: "Epíteto cultivar, usado en plantas cultivadas." },
     { label: "Rango del taxón", name: "taxonRank", help: "Rango taxonómico del registro (especie, género, familia, etc.)." },
     { label: "Rango del taxón original", name: "verbatimTaxonRank", help: "Rango tal como fue registrado originalmente." },
     { label: "Nombre vernacular", name: "vernacularName", type: "textarea", help: "Nombre común o vernáculo del organismo." },
@@ -244,20 +242,21 @@ export const camposOtros = [
     {
         label: "Elevación original",
         name: "verbatimElevation",
+        type: "number",
         help: "Elevación tal como fue registrada originalmente (si aplica).",
     },
-    { label: "Elevación mínima en metros", name: "minimumElevationInMeters", help: "Elevación mínima en metros." },
-    { label: "Elevación máxima en metros", name: "maximumElevationInMeters", help: "Elevación máxima en metros." },
+    { label: "Elevación mínima en metros", name: "minimumElevationInMeters", type: "number", help: "Elevación mínima en metros." },
+    { label: "Elevación máxima en metros", name: "maximumElevationInMeters", type: "number", help: "Elevación máxima en metros." },
     // { label: "Datum vertical", name: "verticalDatum" },
-    { label: "Profundidad original", name: "verbatimDepth", help: "Profundidad registrada originalmente (si aplica)." },
-    { label: "Profundidad mínima en metros", name: "minimumDepthInMeters", help: "Profundidad mínima en metros." },
-    { label: "Profundidad máxima en metros", name: "maximumDepthInMeters", help: "Profundidad máxima en metros." },
+    { label: "Profundidad original", name: "verbatimDepth", type: "number", help: "Profundidad registrada originalmente (si aplica)." },
+    { label: "Profundidad mínima en metros", name: "minimumDepthInMeters", type: "number", help: "Profundidad mínima en metros." },
+    { label: "Profundidad máxima en metros", name: "maximumDepthInMeters", type: "number", help: "Profundidad máxima en metros." },
     // { label: "Distancia mínima sobre la superficie en metros", name: "minimumDistanceAboveSurfaceInMeters" },
     // { label: "Distancia máxima sobre la superficie en metros", name: "maximumDistanceAboveSurfaceInMeters" },
     { label: "Ubicación de acuerdo con", name: "locationAccordingTo", help: "Fuente que describe la ubicación." },
     { label: "Comentarios de la ubicación", name: "locationRemarks", help: "Observaciones adicionales sobre la ubicación." },
-    { label: "Latitud original", name: "verbatimLatitude", help: "Latitud tal como fue registrada originalmente." },
-    { label: "Longitud original", name: "verbatimLongitude", help: "Longitud tal como fue registrada originalmente." },
+    { label: "Latitud original", name: "verbatimLatitude", type: "number", help: "Latitud tal como fue registrada originalmente." },
+    { label: "Longitud original", name: "verbatimLongitude", type: "number", help: "Longitud tal como fue registrada originalmente." },
     { label: "Coordenadas originales", name: "verbatimCoordinates", help: "Coordenadas en el formato original registrado." },
     // { label: "Sistema original de coordenadas", name: "verbatimCoordinateSystem" },
     // { label: "SRS original", name: "verbatimSRS" },
