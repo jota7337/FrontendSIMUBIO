@@ -70,8 +70,8 @@ const SpeciesCatalog = () => {
             .map((s) => s.catalogNumber)
             .filter((cn) => typeof cn === "string" && /\d{6}$/.test(cn))
             .map((cn) => {
-                const match = cn.match(/(\d{6})$/);
-                return match ? parseInt(match[1], 10) : null;
+                const match = cn.match(/(\d{6})$/)
+                return match ? parseInt(match[1], 10) : null
             })
             .filter((num) => num !== null && !isNaN(num))
         if (numbers.length === 0) return null
@@ -115,7 +115,7 @@ const SpeciesCatalog = () => {
 
     const handleDeleteClick = async (e, speciesId) => {
         e.stopPropagation()
-        
+
         // Confirmar eliminación
         if (!window.confirm("¿Estás seguro de que quieres eliminar esta especie? Esta acción no se puede deshacer.")) {
             return
@@ -128,7 +128,7 @@ const SpeciesCatalog = () => {
                 console.error("Error:", error)
             } else {
                 // Actualizar la lista de especies eliminando la especie borrada
-                setSpecies(prevSpecies => prevSpecies.filter(s => s.id !== speciesId))
+                setSpecies((prevSpecies) => prevSpecies.filter((s) => s.id !== speciesId))
                 alert("Especie eliminada correctamente")
             }
         } catch (error) {
@@ -142,14 +142,14 @@ const SpeciesCatalog = () => {
             // Obtener información del usuario actual
             const { data: userData } = await getUsuarioPorId()
             const userRole = userData?.roles?.name
-            
+
             // Si es administrador, traer todas las referencias
             if (userRole === "Administrador") {
                 const allReferences = await getReferencias()
                 // Transformar el formato para que sea compatible con el componente
-                const transformedReferences = allReferences.map(ref => ({
+                const transformedReferences = allReferences.map((ref) => ({
                     id: ref.id,
-                    referencia: ref.referencia
+                    referencia: ref.referencia,
                 }))
                 setReferences(transformedReferences)
             } else {
@@ -231,7 +231,9 @@ const SpeciesCatalog = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const totalPages = Math.ceil(filteredSpecies.length / itemsPerPage)
     const paginatedSpecies = filteredSpecies.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-    useEffect(() => { setCurrentPage(1) }, [itemsPerPage])
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [itemsPerPage])
 
     return (
         <div className="p-4">

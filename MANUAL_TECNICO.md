@@ -1,4 +1,5 @@
 # MANUAL TÉCNICO - SIMUBIO FRONTEND
+
 ## Sistema de Información para el Museo de Biología - Universidad El Bosque
 
 ---
@@ -10,7 +11,7 @@
 **Versión:** 0.0.0  
 **Fecha:** Octubre 2025  
 **Repositorio:** FrontendSIMUBIO  
-**Rama actual:** change/logo  
+**Rama actual:** change/logo
 
 ---
 
@@ -19,35 +20,42 @@
 ### Stack Tecnológico
 
 **Frontend Framework:**
+
 - React 18.3.1 (Single Page Application)
 - Vite 5.4.10 (Build tool y development server)
 - React Router DOM 7.3.0 (Navegación y routing)
 
 **Estilos y UI:**
+
 - Tailwind CSS 3.4.14 (Framework CSS utilitario)
 - PostCSS 8.4.47 (Procesador CSS)
 - Lucide React 0.487.0 (Iconografía)
 - Sistema de diseño corporativo Universidad El Bosque
 
 **Manejo de Estado:**
+
 - React Context API (Estado global)
 - React Hook Form 7.55.0 (Formularios)
 - Zustand/Context patterns (Gestión de estado local)
 
 **Validación:**
+
 - Zod 3.24.2 (Validación de esquemas)
 - @hookform/resolvers 5.0.1 (Integración con React Hook Form)
 
 **Backend y Datos:**
+
 - Supabase 2.49.4 (Base de datos PostgreSQL, autenticación, API)
 - Integración completa con servicios de backend
 
 **Utilidades:**
+
 - File-saver 2.0.5 (Descarga de archivos)
 - XLSX 0.18.5 (Procesamiento de archivos Excel)
 - Recharts 2.15.2 (Gráficos y visualizaciones)
 
 **Desarrollo:**
+
 - ESLint 9.13.0 (Linting)
 - Prettier (Formateo de código)
 - TypeScript support (@types/react)
@@ -148,7 +156,9 @@ El sistema utiliza **Supabase Auth** para manejar la autenticación con las sigu
 ### Roles del Sistema
 
 #### 1. **Administrador**
+
 **Permisos completos del sistema:**
+
 - Dashboard con métricas generales
 - Gestión completa de especies/especímenes
 - Visualización de especies a cargo de curadores
@@ -159,6 +169,7 @@ El sistema utiliza **Supabase Auth** para manejar la autenticación con las sigu
 - Acceso total a todas las funcionalidades
 
 **Rutas disponibles:**
+
 - `/` - Dashboard
 - `/Especies` - Especímenes en consulta
 - `/curadores` - Especímenes a cargo
@@ -168,18 +179,23 @@ El sistema utiliza **Supabase Auth** para manejar la autenticación con las sigu
 - `/usuarios` - Administración de usuarios
 
 #### 2. **Recolector**
+
 **Permisos limitados para recolección:**
+
 - Dashboard básico con sus propios registros
 - Consulta de especies/especímenes (solo lectura)
 - Gestión de perfil personal
 
 **Rutas disponibles:**
+
 - `/` - Dashboard personal
 - `/Especies` - Especímenes en consulta (consulta)
 - `/perfil` - Gestión de perfil
 
 #### 3. **Curador**
+
 **Permisos especializados para curaduría:**
+
 - Dashboard con métricas de curaduría
 - Gestión de especies/especímenes
 - Sistema de correcciones y comentarios
@@ -188,6 +204,7 @@ El sistema utiliza **Supabase Auth** para manejar la autenticación con las sigu
 - Gestión de perfil
 
 **Rutas disponibles:**
+
 - `/` - Dashboard de curaduría
 - `/Especies` - Especímenes en consulta
 - `/Correcciones` - Sistema de correcciones
@@ -212,6 +229,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 ```
 
 **Variables de entorno requeridas:**
+
 - `VITE_SUPABASE_URL`: URL del proyecto Supabase
 - `VITE_SUPABASE_ANON_KEY`: Clave pública del proyecto
 
@@ -220,6 +238,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 #### Tablas Principales
 
 **1. `profiles` - Perfiles de usuario**
+
 - `id` (UUID, PK) - ID del usuario
 - `email` (TEXT) - Correo electrónico
 - `full_name` (TEXT) - Nombre completo
@@ -229,10 +248,12 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 - `created_at` (TIMESTAMP) - Fecha de creación
 
 **2. `roles` - Roles del sistema**
+
 - `id` (INT, PK) - ID del rol
 - `name` (TEXT) - Nombre del rol (Administrador, Curador, Recolector)
 
 **3. `especies` - Registro de especímenes**
+
 - `id` (UUID, PK) - ID único del espécimen
 - `scientificName` (TEXT) - Nombre científico
 - `created_by` (UUID, FK) - Usuario creador
@@ -242,6 +263,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 - `created_at` (TIMESTAMP) - Fecha de creación
 
 **4. `reference` - Colecciones/Referencias**
+
 - `id` (UUID, PK) - ID de la referencia
 - `referencia` (TEXT) - Nombre de la colección
 - `catalogNumber` (TEXT) - Número de catálogo
@@ -249,6 +271,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 - `created_at` (TIMESTAMP) - Fecha de creación
 
 **5. `comentarios` - Sistema de observaciones**
+
 - `id` (UUID, PK) - ID del comentario
 - `especie_id` (UUID, FK) - Referencia al espécimen
 - `author_id` (UUID, FK) - Autor del comentario
@@ -258,6 +281,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 - `created_at` (TIMESTAMP) - Fecha de creación
 
 **6. `estado_especie` - Estados de especímenes**
+
 - `id` (INT, PK) - ID del estado
 - `code` (TEXT) - Código del estado
 - `name` (TEXT) - Nombre del estado
@@ -271,6 +295,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 **Archivo:** `src/pages/home.jsx`
 
 **Funcionalidades:**
+
 - Métricas generales del sistema
 - Gráficos de barras por colección (Recharts)
 - Gráficos circulares de aprobación
@@ -278,6 +303,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 - Responsive design con breakpoints
 
 **APIs utilizadas:**
+
 - `getReferences()` - Obtener colecciones
 - `getEspecieByReferenceUser()` - Especies por usuario y referencia
 
@@ -286,6 +312,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 **Archivo:** `src/components/especies/listaEspecies.jsx`
 
 **Funcionalidades:**
+
 - Lista paginada de especímenes
 - Filtros por estado y búsqueda
 - Acciones CRUD (Crear, Leer, Actualizar, Eliminar)
@@ -294,6 +321,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 - Responsive con paginación adaptativa
 
 **Componentes relacionados:**
+
 - `especieDialog.jsx` - Modal de edición
 - `comentariosDialog.jsx` - Sistema de comentarios
 - `form/especiesForm.jsx` - Formulario dinámico
@@ -303,6 +331,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 **Archivo:** `src/pages/form.jsx`
 
 **Funcionalidades:**
+
 - Formulario multi-sección (6 secciones DarwinCore)
 - Validación con Zod schemas
 - Modo creación y edición
@@ -310,6 +339,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 - Guardado automático por secciones
 
 **Secciones del formulario:**
+
 1. **Información del evento** - Datos de recolección
 2. **Taxonomía** - Clasificación taxonómica
 3. **Registro** - Datos del registro biológico
@@ -322,6 +352,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 **Archivo:** `src/components/correcciones/observationsTable.jsx`
 
 **Funcionalidades:**
+
 - Tabla de comentarios por autor
 - Edición en línea de comentarios
 - Sistema de aprobación
@@ -333,6 +364,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 **Archivo:** `src/components/referencias/referenciasTable.jsx`
 
 **Funcionalidades:**
+
 - CRUD de colecciones/referencias
 - Asignación de curadores
 - Numeración de catálogo
@@ -343,6 +375,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 **Archivo:** `src/components/usuarios/UsuariosAdmin.jsx`
 
 **Funcionalidades:**
+
 - Creación de usuarios con validación estricta
 - Asignación de roles
 - Gestión de perfiles
@@ -354,6 +387,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 **Archivo:** `src/components/exportación/exportación.jsx`
 
 **Funcionalidades:**
+
 - Exportación masiva a Excel
 - Filtros por colección y estado
 - Descarga de plantillas
@@ -368,12 +402,14 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 **Archivo:** `src/index.css`
 
 **Colores principales:**
+
 - **Verde institucional:** `#1b5e20` (oscuro), `#2e7d32` (medio), `#4caf50` (claro)
 - **Amarillo institucional:** `#f57f17` (principal), `#fbc02d` (medio), `#ffeb3b` (claro)
 
 ### Clases Utilitarias UB (Universidad El Bosque)
 
 **Componentes base:**
+
 - `.ub-container` - Contenedor principal con gradiente
 - `.ub-card` - Tarjetas con estilo corporativo
 - `.ub-button-primary` - Botón principal verde
@@ -382,10 +418,12 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 - `.ub-sidebar` - Sidebar con gradiente institucional
 
 **Navegación:**
+
 - `.ub-nav-item` - Items de navegación
 - `.ub-nav-item-active` - Item activo (amarillo)
 
 **Tipografía:**
+
 - `.ub-title` - Títulos principales
 - `.ub-subtitle` - Subtítulos
 - `.ub-text-primary` - Texto principal verde
@@ -395,6 +433,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 **Hook personalizado:** `src/lib/useWindowSize.js`
 
 **Breakpoints:**
+
 - `xs`: < 640px
 - `sm`: 640px - 768px
 - `md`: 768px - 1024px
@@ -419,6 +458,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 6. **OtherSchema** - Coordenadas y elevación
 
 **Validaciones especializadas:**
+
 - Nombres científicos con regex específico
 - Coordenadas geográficas con rangos válidos
 - Fechas en formato ISO 8601
@@ -430,6 +470,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 **Archivo:** `src/lib/fields.js`
 
 **Categorías de campos:**
+
 - **Taxonomía:** 20+ campos con nombres científicos, autoría, clasificación
 - **Evento:** 15+ campos de recolección, preparaciones, estado
 - **Registro:** 10+ campos de protocolo, fecha, hábitat
@@ -445,6 +486,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 **Archivo:** `src/context/NotificationsContext.jsx`
 
 **Funcionalidades:**
+
 - Toast notifications con autoclose
 - 4 variantes: success, error, warning, info
 - Límite configurable de notificaciones
@@ -452,12 +494,13 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 - Tema corporativo Universidad El Bosque
 
 **Uso:**
+
 ```javascript
-import { useNotifications } from './context/NotificationsContext'
+import { useNotifications } from "./context/NotificationsContext"
 
 const notifications = useNotifications()
-notifications.success('Operación exitosa', { title: 'Éxito' })
-notifications.error('Error en la operación', { duration: 5000 })
+notifications.success("Operación exitosa", { title: "Éxito" })
+notifications.error("Error en la operación", { duration: 5000 })
 ```
 
 ### Componente Alert
@@ -465,6 +508,7 @@ notifications.error('Error en la operación', { duration: 5000 })
 **Archivo:** `src/components/ui/Alert.jsx`
 
 **Características:**
+
 - Componente reutilizable para alertas embebidas
 - 4 variantes visuales
 - Soporte para título y contenido
@@ -480,6 +524,7 @@ notifications.error('Error en la operación', { duration: 5000 })
 **Archivo:** `src/lib/excel-especies-logic.js`
 
 **Funcionalidades:**
+
 - Importación masiva desde Excel
 - Mapeo automático de columnas DarwinCore
 - Validación de datos importados
@@ -490,6 +535,7 @@ notifications.error('Error en la operación', { duration: 5000 })
 **Archivo:** `src/lib/export_tab_logic.js`
 
 **Funcionalidades:**
+
 - Exportación filtrada por criterios
 - Formato Excel compatible con DarwinCore
 - Metadatos de exportación
@@ -500,6 +546,7 @@ notifications.error('Error en la operación', { duration: 5000 })
 **Archivo:** `src/lib/table-especie-logic.js`
 
 **Funcionalidades:**
+
 - Paginación adaptativa
 - Filtros dinámicos
 - Ordenamiento múltiple
@@ -513,10 +560,10 @@ notifications.error('Error en la operación', { duration: 5000 })
 
 ```json
 {
-  "dev": "vite",                    // Servidor de desarrollo
-  "build": "vite build",           // Build de producción
-  "preview": "vite preview",       // Preview del build
-  "lint": "eslint .",              // Linting del código
+  "dev": "vite", // Servidor de desarrollo
+  "build": "vite build", // Build de producción
+  "preview": "vite preview", // Preview del build
+  "lint": "eslint .", // Linting del código
   "format": "prettier --write .", // Formateo del código
   "format:check": "prettier --check ." // Verificación de formato
 }
@@ -531,7 +578,7 @@ import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
 
 export default defineConfig({
-    plugins: [react()],
+  plugins: [react()],
 })
 ```
 
@@ -546,6 +593,7 @@ export default defineConfig({
 ### Variables de Entorno
 
 **.env (requerido):**
+
 ```
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
@@ -665,7 +713,7 @@ npm install package@latest
 
 **Desarrollador:** Sistema desarrollado para Universidad El Bosque  
 **Repositorio:** FrontendSIMUBIO  
-**Tecnologías:** React + Vite + Supabase + Tailwind CSS  
+**Tecnologías:** React + Vite + Supabase + Tailwind CSS
 
 ### Documentación Adicional
 
@@ -704,4 +752,4 @@ npm install package@latest
 
 ---
 
-*Este manual técnico proporciona una visión completa del sistema SIMUBIO Frontend para facilitar el mantenimiento, desarrollo futuro y transferencia de conocimiento.*
+_Este manual técnico proporciona una visión completa del sistema SIMUBIO Frontend para facilitar el mantenimiento, desarrollo futuro y transferencia de conocimiento._

@@ -70,7 +70,9 @@ export default function ObservationsTable() {
     const [currentPage, setCurrentPage] = useState(1)
     const totalPages = Math.ceil(filteredObservations.length / itemsPerPage)
     const paginatedObservations = filteredObservations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-    useEffect(() => { setCurrentPage(1) }, [itemsPerPage])
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [itemsPerPage])
 
     return (
         <div className="w-full p-6 bg-gray-100 rounded-lg shadow-md">

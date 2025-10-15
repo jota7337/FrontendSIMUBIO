@@ -21,7 +21,9 @@ const ExportEspecie = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const totalPages = Math.ceil(referenceObservations.length / itemsPerPage)
     const paginatedReferences = referenceObservations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-    useEffect(() => { setCurrentPage(1) }, [itemsPerPage])
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [itemsPerPage])
     const [uploadLog, setUploadLog] = useState("")
     const [uploading, setUploading] = useState(false)
     const [dateRanges, setDateRanges] = useState({})
@@ -103,7 +105,7 @@ const ExportEspecie = () => {
                 // Aquí, como processAndInsertEspecies ya inserta, solo mostramos el log y ejemplo
                 setUploadLog(
                     `✔ Insertadas ${result.inserted} filas en public.especies.\nEjemplo:\n${JSON.stringify(
-                        result.previewSample.map(r => ({ ...r, reference_by: refId })),
+                        result.previewSample.map((r) => ({ ...r, reference_by: refId })),
                         null,
                         2
                     )}`
@@ -140,8 +142,6 @@ const ExportEspecie = () => {
         fetchAllObservations()
     }, [])
 
-
-
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
             <div className="flex items-center justify-between mb-4">
@@ -165,10 +165,10 @@ const ExportEspecie = () => {
                         <select
                             className="w-full border px-2 py-2 rounded mb-4"
                             value={selectedRefId}
-                            onChange={e => setSelectedRefId(e.target.value)}
+                            onChange={(e) => setSelectedRefId(e.target.value)}
                         >
                             <option value="">Selecciona una referencia...</option>
-                            {references.map(ref => (
+                            {references.map((ref) => (
                                 <option key={ref.id} value={ref.id}>
                                     {ref.referencia} {ref.catalogNumber ? `(${ref.catalogNumber})` : ""}
                                 </option>
@@ -177,7 +177,10 @@ const ExportEspecie = () => {
                         <div className="flex justify-end gap-2">
                             <button
                                 className="px-4 py-2 bg-gray-300 rounded"
-                                onClick={() => { setShowRefDialog(false); setSelectedRefId("") }}
+                                onClick={() => {
+                                    setShowRefDialog(false)
+                                    setSelectedRefId("")
+                                }}
                                 disabled={uploading}
                             >
                                 Cancelar

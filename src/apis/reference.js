@@ -28,13 +28,13 @@ export async function getReferencias() {
     }))
 }
 
-export async function createReferencia({ id_curador, referencia , catalogNumber }) {
-    const { error } = await supabase.from("reference").insert([{ id_curador, referencia , catalogNumber }])
+export async function createReferencia({ id_curador, referencia, catalogNumber }) {
+    const { error } = await supabase.from("reference").insert([{ id_curador, referencia, catalogNumber }])
     if (error) throw error
 }
 
-export async function updateReferencia(id, { id_curador, referencia , catalogNumber }) {
-    const { error } = await supabase.from("reference").update({ id_curador, referencia , catalogNumber }).eq("id", id)
+export async function updateReferencia(id, { id_curador, referencia, catalogNumber }) {
+    const { error } = await supabase.from("reference").update({ id_curador, referencia, catalogNumber }).eq("id", id)
     if (error) throw error
 }
 

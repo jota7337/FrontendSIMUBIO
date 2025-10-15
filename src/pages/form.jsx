@@ -57,7 +57,7 @@ const Form = () => {
         const { data, error } = await createEspecie(formData, userId)
         if (error) notifications.error("Error al crear especie")
         else {
-            notifications.success("Especie creada correctamente", { title: 'Registro creado' })
+            notifications.success("Especie creada correctamente", { title: "Registro creado" })
             navigate("/Especies")
         }
     }
@@ -72,7 +72,7 @@ const Form = () => {
             const { data, error } = await createComentario({ especieId: editingId, cuerpo: comentario, campo: campoComentario })
             if (error) notifications.error("Error al crear comentario")
             else {
-                notifications.success("Comentario enviado", { title: 'Comentario' })
+                notifications.success("Comentario enviado", { title: "Comentario" })
                 setComentario("")
                 setCampoComentario("")
                 setShowComentarioModal(false)
@@ -85,31 +85,31 @@ const Form = () => {
 
     const handleUpdate = async () => {
         if (!editingId) return notifications.warning("No hay especie para actualizar")
-        
+
         // Crear una copia de formData y quitar el campo 'reference' si existe
         const cleanedFormData = { ...formData }
         if (cleanedFormData.reference) {
             console.log("Quitando datos de reference antes de actualizar:", cleanedFormData.reference)
             delete cleanedFormData.reference
         }
-        
+
         console.log("Updating especie ID:", editingId, "with data:", cleanedFormData)
         const { data, error } = await updateEspecie(editingId, cleanedFormData)
         console.log(data, error)
 
         if (error) notifications.error("Error al actualizar especie")
         else {
-            notifications.success("Especie actualizada", { title: 'Actualización' })
+            notifications.success("Especie actualizada", { title: "Actualización" })
             navigate("/Especies")
         }
     }
 
     const handleDelete = async () => {
-    if (!editingId) return notifications.warning("No hay especie para eliminar")
+        if (!editingId) return notifications.warning("No hay especie para eliminar")
 
         const { data, error } = await deleteEspecie(editingId)
         if (error) notifications.error("Error al eliminar especie")
-        else notifications.success("Especie eliminada", { title: 'Eliminada' })
+        else notifications.success("Especie eliminada", { title: "Eliminada" })
     }
 
     const handleGoToDashboard = () => {

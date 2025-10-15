@@ -6,7 +6,6 @@ import { supabase } from "../supabase/client"
 import { useNotifications } from "../context/NotificationsContext"
 import { useNavigate } from "react-router-dom"
 
-
 function Login() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -34,7 +33,7 @@ function Login() {
             }
             // Consultar si tiene perfil
             const { data: profileData } = await getUsuarioPorId()
-     
+
             if (!profileData) {
                 setShowProfileDialog(true)
             } else {
@@ -86,7 +85,15 @@ function Login() {
     return (
         <>
             {showProfileDialog && (
-                <UsuarioDialog open={showProfileDialog} onClose={() => setShowProfileDialog(false)} onSaved={() => { setShowProfileDialog(false); navigate("/"); }} initialData={null} />
+                <UsuarioDialog
+                    open={showProfileDialog}
+                    onClose={() => setShowProfileDialog(false)}
+                    onSaved={() => {
+                        setShowProfileDialog(false)
+                        navigate("/")
+                    }}
+                    initialData={null}
+                />
             )}
             {/* Modal para cambio de contraseña */}
             {showPasswordDialog && (
@@ -95,9 +102,9 @@ function Login() {
             <div className="flex h-screen items-center justify-center ub-container">
                 <div className="ub-card p-8 w-96">
                     <div className="text-center mb-6">
-                        <img 
-                            src="/universidad.png" 
-                            alt="Universidad El Bosque" 
+                        <img
+                            src="/universidad.png"
+                            alt="Universidad El Bosque"
                             className="mx-auto h-20 w-20 rounded-full border-2 border-green-700 mb-4"
                         />
                         <h2 className="ub-title mb-2">Iniciar Sesión</h2>
@@ -129,9 +136,7 @@ function Login() {
                                 required
                             />
                         </div>
-                        <button className="ub-button-primary w-full py-3 text-lg">
-                            Iniciar Sesión
-                        </button>
+                        <button className="ub-button-primary w-full py-3 text-lg">Iniciar Sesión</button>
                     </form>
 
                     <div className="my-4 flex items-center justify-center">
@@ -142,7 +147,12 @@ function Login() {
                         type="button"
                         onClick={handleMicrosoftLogin}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="24" height="24"><rect fill="#F35325" x="2" y="2" width="13" height="13"/><rect fill="#81BC06" x="17" y="2" width="13" height="13"/><rect fill="#05A6F0" x="2" y="17" width="13" height="13"/><rect fill="#FFBA08" x="17" y="17" width="13" height="13"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="24" height="24">
+                            <rect fill="#F35325" x="2" y="2" width="13" height="13" />
+                            <rect fill="#81BC06" x="17" y="2" width="13" height="13" />
+                            <rect fill="#05A6F0" x="2" y="17" width="13" height="13" />
+                            <rect fill="#FFBA08" x="17" y="17" width="13" height="13" />
+                        </svg>
                         Iniciar sesión con Microsoft
                     </button>
 

@@ -49,7 +49,9 @@ const ReferenciasTable = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const totalPages = Math.ceil(referencias.length / itemsPerPage)
     const paginatedReferencias = referencias.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-    useEffect(() => { setCurrentPage(1) }, [itemsPerPage])
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [itemsPerPage])
 
     return (
         <div className="p-4">
