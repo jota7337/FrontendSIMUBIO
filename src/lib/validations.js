@@ -78,7 +78,7 @@ export const TaxonSchema = object({
             'Debe contener solo letras y espacios. Si hay varios nombres, sepáralos con " | ", por ejemplo: "Buitre | Chulo"'
         )
         .optional(),
-        dateIdentified: string()
+    dateIdentified: string()
         .regex(
             /^(?:\d{4}(?:-\d{2})?(?:-\d{2})?(?:\/(?:\d{2}|\d{4}(?:-\d{2})?(?:-\d{2})?))?)$/,
             "Debe ingresar una fecha válida en formato ISO 8601 (AAAA, AAAA-MM, AAAA-MM-DD) o un intervalo como AAAA-MM-DD/AAAA-MM-DD o 2009/2010."
@@ -200,30 +200,30 @@ export const OtherSchema = object({
         .optional(),
     verbatimCoordinateSystem: string().optional(),
     verbatimSRS: string().optional(),
-    
+
     decimalLatitude: string()
-        .regex(
-            /^[0-9]+(\.[0-9]+)?$/,
-            "Solo se permiten números y punto decimal. No se aceptan comas ni letras"
+        .regex(/^[0-9]+(\.[0-9]+)?$/, "Solo se permiten números y punto decimal. No se aceptan comas ni letras")
+        .refine(
+            (val) => {
+                const num = parseFloat(val)
+                return num >= -90 && num <= 90
+            },
+            {
+                message: "La latitud debe estar entre -90 y 90 grados",
+            }
         )
-        .refine((val) => {
-            const num = parseFloat(val);
-            return num >= -90 && num <= 90;
-        }, {
-            message: "La latitud debe estar entre -90 y 90 grados"
-        })
         .optional(),
     decimalLongitude: string()
-        .regex(
-            /^-?[0-9]+(\.[0-9]+)?$/,
-            "Solo se permiten números, punto decimal y signo negativo. No se aceptan comas ni letras"
+        .regex(/^-?[0-9]+(\.[0-9]+)?$/, "Solo se permiten números, punto decimal y signo negativo. No se aceptan comas ni letras")
+        .refine(
+            (val) => {
+                const num = parseFloat(val)
+                return num >= -180 && num <= 180
+            },
+            {
+                message: "La longitud debe estar entre -180 y 180 grados",
+            }
         )
-        .refine((val) => {
-            const num = parseFloat(val);
-            return num >= -180 && num <= 180;
-        }, {
-            message: "La longitud debe estar entre -180 y 180 grados"
-        })
         .optional(),
     geodeticDatum: string().optional(),
 })

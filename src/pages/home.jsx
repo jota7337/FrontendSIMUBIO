@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { BarChart, Bar, PieChart, Pie, Tooltip, XAxis, YAxis, CartesianGrid, Legend } from "recharts"
 import { getReferences } from "../apis/reference"
-import {  getEspecieByReferenceUser } from "../apis/Especie"
+import { getEspecieByReferenceUser } from "../apis/Especie"
 import logo from "../../public/universidad.png"
 
 export default function Dashboard() {

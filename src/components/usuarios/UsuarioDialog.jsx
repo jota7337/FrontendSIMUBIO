@@ -128,26 +128,26 @@ const UsuarioDialog = ({ open, onClose, onSaved, initialData }) => {
 
                     {!initialData && (
                         <>
-                        <div>
-                            <label className="block text-sm font-medium">Contraseña</label>
-                            <input
-                                name="password"
-                                value={form.password}
-                                onChange={handleChange}
-                                type="password"
-                                className="w-full border rounded px-2 py-1"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium">Confirmar contraseña</label>
-                            <input
-                                name="confirmPassword"
-                                value={confirmPassword}
-                                onChange={e => setConfirmPassword(e.target.value)}
-                                type="password"
-                                className="w-full border rounded px-2 py-1"
-                            />
-                        </div>
+                            <div>
+                                <label className="block text-sm font-medium">Contraseña</label>
+                                <input
+                                    name="password"
+                                    value={form.password}
+                                    onChange={handleChange}
+                                    type="password"
+                                    className="w-full border rounded px-2 py-1"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium">Confirmar contraseña</label>
+                                <input
+                                    name="confirmPassword"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    type="password"
+                                    className="w-full border rounded px-2 py-1"
+                                />
+                            </div>
                         </>
                     )}
 

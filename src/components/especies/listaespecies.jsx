@@ -192,7 +192,9 @@ const ListEspecies = () => {
         }
     }
     // Resetear página si cambia el tamaño de página
-    useEffect(() => { setCurrentPage(1) }, [itemsPerPage])
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [itemsPerPage])
 
     return (
         <div className="w-full p-6 ub-container min-h-screen">
@@ -303,69 +305,73 @@ const ListEspecies = () => {
                                             >
                                                 Asignar número de colector
                                             </button>
-            {/* Diálogo para asignar número de colector */}
-            {showAssignDialog && (
-                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg min-w-[300px]">
-                        <h2 className="text-lg font-bold mb-4">Asignar número de colector</h2>
-                        <div className="mb-2">
-                            <span className="font-semibold text-blue-700">
-                                Sugerido: {suggestedCollector}
-                            </span>
-                        </div>
-                        {assignSpecies ? (
-                            <div className="mb-2">
-                                <div className="mb-2">
-                                    Número actual: {" "}
-                                    <span className="font-semibold">{assignSpecies.recordNumber || "Sin número"}</span>
-                                </div>
-                                <div className="mb-2">
-                                    Nombre científico: {" "}
-                                    <span className="font-semibold">{assignSpecies.scientificName || assignSpecies.nombre}</span>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="mb-2">Selecciona una especie para asignar el número de colector.</div>
-                        )}
-                        <form onSubmit={handleAssignSubmit}>
-                            <input
-                                type="text"
-                                placeholder="Nuevo número de colector"
-                                className="border px-2 py-1 rounded w-full mb-4"
-                                value={collectorInput}
-                                onChange={(e) => setCollectorInput(e.target.value)}
-                                disabled={loadingAssign}
-                            />
-                            <div className="flex justify-end gap-2">
-                                <button
-                                    type="button"
-                                    className="px-4 py-2 bg-gray-300 rounded"
-                                    onClick={handleCloseAssignDialog}
-                                    disabled={loadingAssign}
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 bg-green-600 text-white rounded"
-                                    disabled={loadingAssign || !collectorInput}
-                                >
-                                    {loadingAssign ? "Asignando..." : "Asignar"}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+                                            {/* Diálogo para asignar número de colector */}
+                                            {showAssignDialog && (
+                                                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                                                    <div className="bg-white p-6 rounded-lg shadow-lg min-w-[300px]">
+                                                        <h2 className="text-lg font-bold mb-4">Asignar número de colector</h2>
+                                                        <div className="mb-2">
+                                                            <span className="font-semibold text-blue-700">
+                                                                Sugerido: {suggestedCollector}
+                                                            </span>
+                                                        </div>
+                                                        {assignSpecies ? (
+                                                            <div className="mb-2">
+                                                                <div className="mb-2">
+                                                                    Número actual:{" "}
+                                                                    <span className="font-semibold">
+                                                                        {assignSpecies.recordNumber || "Sin número"}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="mb-2">
+                                                                    Nombre científico:{" "}
+                                                                    <span className="font-semibold">
+                                                                        {assignSpecies.scientificName || assignSpecies.nombre}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="mb-2">
+                                                                Selecciona una especie para asignar el número de colector.
+                                                            </div>
+                                                        )}
+                                                        <form onSubmit={handleAssignSubmit}>
+                                                            <input
+                                                                type="text"
+                                                                placeholder="Nuevo número de colector"
+                                                                className="border px-2 py-1 rounded w-full mb-4"
+                                                                value={collectorInput}
+                                                                onChange={(e) => setCollectorInput(e.target.value)}
+                                                                disabled={loadingAssign}
+                                                            />
+                                                            <div className="flex justify-end gap-2">
+                                                                <button
+                                                                    type="button"
+                                                                    className="px-4 py-2 bg-gray-300 rounded"
+                                                                    onClick={handleCloseAssignDialog}
+                                                                    disabled={loadingAssign}
+                                                                >
+                                                                    Cancelar
+                                                                </button>
+                                                                <button
+                                                                    type="submit"
+                                                                    className="px-4 py-2 bg-green-600 text-white rounded"
+                                                                    disabled={loadingAssign || !collectorInput}
+                                                                >
+                                                                    {loadingAssign ? "Asignando..." : "Asignar"}
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            )}
                                             <span
                                                 title="Comentarios de la especie"
                                                 className="cursor-pointer text-green-700 text-xl flex items-center gap-1"
                                                 onClick={(e) => handleComentariosClick(e, item)}
                                             >
                                                 💬
-                                                <span className="ub-badge-info">
-                                                    {comentariosCount[item.id] || 0}
-                                                </span>
+                                                <span className="ub-badge-info">{comentariosCount[item.id] || 0}</span>
                                             </span>
                                             {/* Diálogo de comentarios como componente */}
                                             <ComentariosDialog

@@ -28,7 +28,6 @@ export async function createEspecie(data, userId) {
 }
 
 export async function updateEspecie(id, data) {
-    
     return await supabase.from("especies").update(data).eq("id", id)
 }
 
@@ -71,10 +70,10 @@ export async function getEspecieById(id) {
 }
 
 export async function getEspecieByReference(reference_id) {
-        const response = await supabase
-                .from("especies")
-                .select(
-                        `
+    const response = await supabase
+        .from("especies")
+        .select(
+            `
             *,
             estado_especie (
                 id,
@@ -83,10 +82,10 @@ export async function getEspecieByReference(reference_id) {
             ),
             reference (*)
         `
-                )
-                .eq("reference_by", reference_id)
+        )
+        .eq("reference_by", reference_id)
 
-        return response.data
+    return response.data
 }
 
 export async function createEspeciesBatch(rows, userId) {
@@ -102,12 +101,12 @@ export async function createEspeciesBatch(rows, userId) {
 }
 
 export async function getEspecieByUser() {
-             const { data: userData, error: userError } = await supabase.auth.getUser()
-        if (userError || !userData?.user?.id) {
-            alert("No se pudo obtener el usuario actual")
-            return
-        }
-        const userId = userData.user.id
+    const { data: userData, error: userError } = await supabase.auth.getUser()
+    if (userError || !userData?.user?.id) {
+        alert("No se pudo obtener el usuario actual")
+        return
+    }
+    const userId = userData.user.id
     const response = await supabase.from("especies").select("* , reference (*)").eq("created_by", userId)
 
     if (response.error) {

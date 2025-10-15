@@ -9,15 +9,15 @@ Se implementó un sistema global de notificaciones (toasts) y un componente `Ale
 ### Uso de toasts
 
 ```jsx
-import { useNotifications } from './context/NotificationsContext'
+import { useNotifications } from "./context/NotificationsContext"
 
 function Ejemplo() {
-	const notifications = useNotifications()
-	const guardar = () => {
-		// ... lógica
-		notifications.success('Guardado correctamente', { title: 'Éxito' })
-	}
-	return <button onClick={guardar}>Guardar</button>
+  const notifications = useNotifications()
+  const guardar = () => {
+    // ... lógica
+    notifications.success("Guardado correctamente", { title: "Éxito" })
+  }
+  return <button onClick={guardar}>Guardar</button>
 }
 ```
 
@@ -28,10 +28,10 @@ Parámetros opcionales: `{ title?: string, duration?: number }`.
 ### Componente Alert embebido
 
 ```jsx
-import Alert from './components/ui/Alert'
+import Alert from "./components/ui/Alert"
 
-<Alert variant="error" title="Error de validación">
-	Debe completar los campos obligatorios
+;<Alert variant="error" title="Error de validación">
+  Debe completar los campos obligatorios
 </Alert>
 ```
 
@@ -42,21 +42,25 @@ Clases utilitarias en `index.css` prefijo `ub-` (ej: `ub-button-primary`, `ub-ca
 ## Scripts
 
 Instalar dependencias:
+
 ```
 npm install
 ```
 
 Ejecutar en desarrollo:
+
 ```
 npm run dev
 ```
 
 Construir:
+
 ```
 npm run build
 ```
 
 Previsualizar build:
+
 ```
 npm run preview
 ```

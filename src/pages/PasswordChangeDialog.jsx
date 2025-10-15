@@ -45,15 +45,23 @@ const PasswordChangeDialog = ({ open, onClose, userId }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
                 <h3 className="text-xl font-bold mb-4">Cambiar contraseña</h3>
-                {error && <Alert variant="error" title="Error" className="mb-4">{error}</Alert>}
-                {success && <Alert variant="success" title="Éxito" className="mb-4">Contraseña cambiada correctamente</Alert>}
+                {error && (
+                    <Alert variant="error" title="Error" className="mb-4">
+                        {error}
+                    </Alert>
+                )}
+                {success && (
+                    <Alert variant="success" title="Éxito" className="mb-4">
+                        Contraseña cambiada correctamente
+                    </Alert>
+                )}
                 <form onSubmit={handleSubmit} className="space-y-3">
                     <div>
                         <label className="block text-sm font-medium">Nueva contraseña</label>
                         <input
                             type="password"
                             value={password}
-                            onChange={e => setPassword(e.target.value)}
+                            onChange={(e) => setPassword(e.target.value)}
                             className="w-full border rounded px-2 py-1"
                         />
                     </div>
@@ -62,7 +70,7 @@ const PasswordChangeDialog = ({ open, onClose, userId }) => {
                         <input
                             type="password"
                             value={confirmPassword}
-                            onChange={e => setConfirmPassword(e.target.value)}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                             className="w-full border rounded px-2 py-1"
                         />
                     </div>

@@ -4,10 +4,10 @@ export async function getUsuarioPorId() {
     const { data: userData } = await supabase.auth.getUser()
     const userId = userData.user.id
 
-        const { data, error } = await supabase
-                .from("profiles")
-                .select(
-                        `
+    const { data, error } = await supabase
+        .from("profiles")
+        .select(
+            `
             id, 
             full_name,
             email,
@@ -18,10 +18,10 @@ export async function getUsuarioPorId() {
                 name
             )
         `
-                )
-                .eq("id", userId)
-                .single()
-     
+        )
+        .eq("id", userId)
+        .single()
+
     return { data, error }
 }
 

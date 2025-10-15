@@ -63,9 +63,9 @@ const UsuariosAdmin = () => {
         fetchUsuarios()
     }
 
-    const filtered = usuarios.filter(u => {
+    const filtered = usuarios.filter((u) => {
         if (!filterName.trim()) return true
-        const target = `${u.full_name || ''} ${u.email || ''}`.toLowerCase()
+        const target = `${u.full_name || ""} ${u.email || ""}`.toLowerCase()
         return target.includes(filterName.toLowerCase())
     })
 
@@ -130,22 +130,25 @@ const UsuariosAdmin = () => {
                                             <td className="p-3 ub-text-primary font-medium">{u.full_name || "—"}</td>
                                             <td className="p-3 ub-text-secondary">{u.email}</td>
                                             <td className="p-3">
-                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                                    u.roles?.name === 'Administrador' ? 'ub-badge-success' :
-                                                    u.roles?.name === 'Curador' ? 'ub-badge-warning' :
-                                                    'ub-badge-info'
-                                                }`}>
+                                                <span
+                                                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                                        u.roles?.name === "Administrador"
+                                                            ? "ub-badge-success"
+                                                            : u.roles?.name === "Curador"
+                                                              ? "ub-badge-warning"
+                                                              : "ub-badge-info"
+                                                    }`}
+                                                >
                                                     {u.roles?.name || "Usuario"}
                                                 </span>
                                             </td>
                                             <td className="p-3 ub-text-secondary">{u.scientific_name || "—"}</td>
                                             <td className="p-3 ub-text-secondary">{u.orcid || "—"}</td>
-                                            <td className="p-3 ub-text-secondary text-sm">{new Date(u.created_at).toLocaleString()}</td>
+                                            <td className="p-3 ub-text-secondary text-sm">
+                                                {new Date(u.created_at).toLocaleString()}
+                                            </td>
                                             <td className="p-3 flex gap-2">
-                                                <button
-                                                    onClick={() => handleEdit(u)}
-                                                    className="ub-button-secondary text-sm"
-                                                >
+                                                <button onClick={() => handleEdit(u)} className="ub-button-secondary text-sm">
                                                     Editar
                                                 </button>
                                                 <button
@@ -160,7 +163,7 @@ const UsuariosAdmin = () => {
                                 ) : (
                                     <tr>
                                         <td colSpan="7" className="text-center p-6 ub-text-muted">
-                                            {filterName ? 'No hay coincidencias para el filtro' : 'No hay usuarios registrados'}
+                                            {filterName ? "No hay coincidencias para el filtro" : "No hay usuarios registrados"}
                                         </td>
                                     </tr>
                                 )}
